@@ -11,8 +11,7 @@ WorldVenture is a web application designed to provide users with an engaging pla
 - **BackOffice**:
   - Blog management tools for creating and deleting posts.
   - Dashboard with statistics and recent activities.
-- **Database**:
-  - Secure interactions using PDO with prepared statements.
+- **Database**
 
 ## Requirements
 - PHP 7.4 or higher
@@ -31,7 +30,7 @@ WorldVenture is a web application designed to provide users with an engaging pla
    ```
 4. Start the Apache server and navigate to the project directory in your browser.
 
-## Usage
+## Usage local !
 - Access the FrontOffice at `http://localhost/web.pro/web V2/pro/main_front/index.html`.
 - Access the BackOffice at `http://localhost/web.pro/web V2/pro/main_backoffice/index.html`.
 
@@ -51,4 +50,4 @@ WorldVenture is a web application designed to provide users with an engaging pla
 This project is licensed under the MIT License.
 
 ## Author
-WorldVenture Development Team
+WorldVenture Development Team (aladin sliti,sourour sethom ,mariem zayeni,amal gharsa and yoser larbch) 
