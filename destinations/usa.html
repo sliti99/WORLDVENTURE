@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>États-Unis | WorldVenture</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* COPIE EXACTE DU CSS DE france.html */
+        .destination-hero {
+            height: 60vh;
+            background: linear-gradient(rgba(10, 36, 99, 0.8), rgba(10, 36, 99, 0.8)), 
+                        url('../assets/img/destinations/usa.jpg') center/cover;
+            display: flex;
+            align-items: flex-end;
+            color: white;
+            padding: 0 5% 5%;
+        }
+        .destination-content {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 5%;
+        }
+        .destination-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        .highlight-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .highlight-card:hover {
+            transform: translateY(-5px);
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <!-- STRUCTURE IDENTIQUE À france.html -->
+    <header class="destination-hero">
+        <div>
+            <a href="../destinations.html" class="back-button">
+                <i class="fas fa-arrow-left"></i> Retour aux destinations
+            </a>
+            <h1>États-Unis</h1>
+            <p class="subtitle">La terre de tous les possibles</p>
+        </div>
+    </header>
+
+    <main class="destination-content">
+        <section>
+            <h2>Découvrez l'Amérique</h2>
+            <p>Des gratte-ciel iconiques de New York aux paysages grandioses du Grand Canyon, les États-Unis offrent une diversité incomparable entre villes vibrantes et nature sauvage.</p>
+        </section>
+
+        <!-- MÊME GRILLE DE POINTS FORTS -->
+        <section class="destination-highlights">
+            <div class="highlight-card">
+                <i class="fas fa-city fa-2x" style="color: #0a2463;"></i>
+                <h3>Villes iconiques</h3>
+                <p>New York, Los Angeles, Chicago et leurs monuments légendaires.</p>
+            </div>
+
+            <div class="highlight-card">
+                <i class="fas fa-tree fa-2x" style="color: #0a2463;"></i>
+                <h3>Parcs nationaux</h3>
+                <p>63 parcs dont Yellowstone et le Grand Canyon.</p>
+            </div>
+
+            <div class="highlight-card">
+                <i class="fas fa-route fa-2x" style="color: #0a2463;"></i>
+                <h3>Road trips</h3>
+                <p>Route 66 et Pacific Coast Highway.</p>
+            </div>
+        </section>
+
+        <!-- MÊME GALERIE -->
+        <section>
+            <h2>Galerie Photo</h2>
+            <div class="gallery-grid">
+                <img src="../assets/img/destinations/usa-1.jpg" alt="New York" class="gallery-img">
+                <img src="../assets/img/destinations/usa-2.jpg" alt="Grand Canyon" class="gallery-img">
+                <img src="../assets/img/destinations/usa-3.jpg" alt="Golden Gate Bridge" class="gallery-img">
+            </div>
+        </section>
+
+        <!-- MÊME CTA -->
+        <section style="text-align: center; margin: 50px 0;">
+            <a href="../contact.html" class="vs-btn" style="padding: 15px 30px; font-size: 1.2rem;">
+                <i class="fas fa-paper-plane"></i> Demander un devis
+            </a>
+        </section>
+    </main>
+
+    <footer class="blue-footer">
+        <p>© 2023 WorldVenture. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>

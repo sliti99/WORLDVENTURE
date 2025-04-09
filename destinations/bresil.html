@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brésil | Nom de votre agence</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ 
+    <style>
+        /* Styles spécifiques à la page détaillée */
+        .destination-hero {
+            height: 60vh;
+            background: linear-gradient(rgba(10, 36, 99, 0.8), rgba(10, 36, 99, 0.8)), 
+                        url('../assets/img/destinations/bresil.jpg') center/cover;
+            display: flex;
+            align-items: flex-end;
+            color: white;
+            padding: 0 5% 5%;
+        }
+
+        .destination-content {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 5%;
+        }
+
+        .destination-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .highlight-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .highlight-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <!-- En-tête avec image de fond -->
+    <header class="destination-hero">
+        <div>
+            <a href="../destinations.html" class="back-button">
+                <i class="fas fa-arrow-left"></i> Retour aux destinations
+            </a>
+            <h1>Brésil</h1>
+            <p class="subtitle">Découvrez le pays du Carnaval et de l'Amazonie</p>
+        </div>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="destination-content">
+        <section>
+            <h2>Le Brésil, une terre de contrastes</h2>
+            <p>Entre les plages de Rio, la forêt amazonienne et les chutes d'Iguaçu, le Brésil offre une diversité naturelle et culturelle époustouflante. Découvrez des villes vibrantes, une nature préservée et une culture métissée unique au monde.</p>
+        </section>
+
+        <!-- Points forts -->
+        <section class="destination-highlights">
+            <div class="highlight-card">
+                <i class="fas fa-umbrella-beach fa-2x" style="color: #0a2463;"></i>
+                <h3>Plages</h3>
+                <p>7 000 km de côtes paradisiaques, des plages de Copacabana aux eaux turquoises de Fernando de Noronha.</p>
+            </div>
+
+            <div class="highlight-card">
+                <i class="fas fa-tree fa-2x" style="color: #0a2463;"></i>
+                <h3>Nature</h3>
+                <p>La forêt amazonienne, poumon vert de la planète, couvre 60% du territoire avec une biodiversité unique.</p>
+            </div>
+
+            <div class="highlight-card">
+                <i class="fas fa-music fa-2x" style="color: #0a2463;"></i>
+                <h3>Culture</h3>
+                <p>Carnaval de Rio, capoeira, samba et une mixité culturelle fascinante.</p>
+            </div>
+        </section>
+
+        <!-- Galerie -->
+        <section>
+            <h2>Galerie Photo</h2>
+            <div class="gallery-grid">
+                <img src="../assets/img/destinations/bresil-1.jpg" alt="Rio de Janeiro - Christ Rédempteur" class="gallery-img">
+                <img src="../assets/img/destinations/bresil-2.jpg" alt="Forêt amazonienne" class="gallery-img">
+                <img src="../assets/img/destinations/bresil-3.jpg" alt="Chutes d'Iguaçu" class="gallery-img">
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section style="text-align: center; margin: 50px 0;">
+            <a href="../contact.html" class="vs-btn" style="padding: 15px 30px; font-size: 1.2rem;">
+                <i class="fas fa-paper-plane"></i> Demander un devis
+            </a>
+        </section>
+    </main>
+
+    <footer class="blue-footer">
+        <p>© 2023 Nom de votre agence. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>

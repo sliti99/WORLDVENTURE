@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espagne | Nom de votre agence</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* COPIE EXACTE DU CSS DE france.html */
+        .destination-hero {
+            height: 60vh;
+            background: linear-gradient(rgba(10, 36, 99, 0.8), rgba(10, 36, 99, 0.8)), 
+                        url('../assets/img/destinations/espagne.jpg') center/cover;
+            display: flex;
+            align-items: flex-end;
+            color: white;
+            padding: 0 5% 5%;
+        }
+        .destination-content {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 5%;
+        }
+        .destination-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        .highlight-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .highlight-card:hover {
+            transform: translateY(-5px);
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <!-- STRUCTURE IDENTIQUE À france.html -->
+    <header class="destination-hero">
+        <div>
+            <a href="../destinations.html" class="back-button">
+                <i class="fas fa-arrow-left"></i> Retour aux destinations
+            </a>
+            <h1>Espagne</h1>
+            <p class="subtitle">Fiesta, soleil et passion</p>
+        </div>
+    </header>
+
+    <main class="destination-content">
+        <section>
+            <h2>L'Espagne vibrante</h2>
+            <p>Découvrez un pays où les traditions séculaires côtoient une modernité audacieuse, des plages ensoleillées de Costa del Sol aux chefs-d'œuvre architecturaux de Gaudí.</p>
+        </section>
+
+        <!-- MÊME GRILLE DE POINTS FORTS -->
+        <section class="destination-highlights">
+            <div class="highlight-card">
+                <i class="fas fa-sun fa-2x" style="color: #0a2463;"></i>
+                <h3>Climat</h3>
+                <p>Plus de 300 jours de soleil par an sur la Costa Brava.</p>
+            </div>
+
+            <div class="highlight-card">
+                <i class="fas fa-utensils fa-2x" style="color: #0a2463;"></i>
+                <h3>Gastronomie</h3>
+                <p>Tapas, paella et sangria - une explosion de saveurs.</p>
+            </div>
+
+            <div class="highlight-card">
+                <i class="fas fa-landmark fa-2x" style="color: #0a2463;"></i>
+                <h3>Culture</h3>
+                <p>47 sites classés à l'UNESCO dont l'Alhambra et la Sagrada Familia.</p>
+            </div>
+        </section>
+
+        <!-- MÊME GALERIE -->
+        <section>
+            <h2>Galerie Photo</h2>
+            <div class="gallery-grid">
+                <img src="../assets/img/destinations/espagne-1.jpg" alt="Barcelone" class="gallery-img">
+                <img src="../assets/img/destinations/espagne-2.jpg" alt="Séville" class="gallery-img">
+                <img src="../assets/img/destinations/espagne-3.jpg" alt="Ibiza" class="gallery-img">
+            </div>
+        </section>
+
+        <!-- MÊME CTA -->
+        <section style="text-align: center; margin: 50px 0;">
+            <a href="../contact.html" class="vs-btn" style="padding: 15px 30px; font-size: 1.2rem;">
+                <i class="fas fa-paper-plane"></i> Demander un devis
+            </a>
+        </section>
+    </main>
+
+    <footer class="blue-footer">
+        <p>© 2023 Nom de votre agence. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destinations | WorldVenture</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Styles additionnels pour la pagination */
+        .load-more-container {
+            text-align: center;
+            margin: 40px 0;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        #destination-counter {
+            font-size: 1.1rem;
+            color: #0a2463;
+            margin-top: 10px;
+        }
+
+        /* Style pour le bouton de retour */
+        .back-to-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            z-index: 100;
+            text-decoration: none;
+        }
+
+        .back-to-home:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .hero-header {
+            position: relative;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <header class="hero-header">
+        <!-- Bouton de retour ajouté ici -->
+        <a href="index.html" class="back-to-home">
+            <i class="fas fa-arrow-left"></i> Retour à l'accueil
+        </a>
+        
+        <h1>Explorez le Monde</h1>
+        <p id="destination-counter">Découvrez nos destinations phares</p>
+    </header>
+
+    <main>
+        <!-- Filtre par continent -->
+        <div class="filter-container">
+            <select id="continent-filter" class="filter-dropdown">
+                <option value="all">Tous les continents</option>
+                <option value="europe">Europe</option>
+                <option value="asia">Asie</option>
+                <option value="america">Amérique</option>
+                <option value="africa">Afrique</option>
+                <option value="oceania">Océanie</option>
+            </select>
+            <button id="reset-filter" class="vs-btn">Réinitialiser</button>
+        </div>
+
+        <!-- Grille des destinations (vide initialement) -->
+        <div class="destinations-grid" id="destinations-grid">
+            <!-- Les cartes seront ajoutées dynamiquement par JavaScript -->
+        </div>
+
+        <!-- Bouton "Voir plus" -->
+        <div class="load-more-container">
+            <button id="load-more" class="vs-btn load-more-btn">
+                <i class="fas fa-plus"></i> Charger plus de destinations
+            </button>
+        </div>
+    </main>
+
+    <footer class="blue-footer">
+        <p>© 2023 WorldVenture. Tous droits réservés.</p>
+        <p><a href="contact.html">Contactez-nous</a> | <a href="mentions.html">Mentions légales</a></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Données complètes des destinations
+            const destinationsData = [
+                { name: "France", image: "france.jpg", continent: "europe", link: "destinations/france.html" },
+                { name: "Japon", image: "japon.jpg", continent: "asia", link: "destinations/japon.html" },
+                { name: "Italie", image: "italie.jpg", continent: "europe", link: "destinations/italie.html" },
+                { name: "Canada", image: "canada.jpg", continent: "america", link: "destinations/canada.html" },
+                { name: "Espagne", image: "espagne.jpg", continent: "europe", link: "destinations/espagne.html" },
+                { name: "États-Unis", image: "usa.jpg", continent: "america", link: "destinations/usa.html" },
+                { name: "Australie", image: "australie.jpg", continent: "oceania", link: "destinations/australie.html" },
+                { name: "Maroc", image: "maroc.jpg", continent: "africa", link: "destinations/maroc.html" },
+                { name: "Brésil", image: "bresil.jpg", continent: "america", link: "destinations/bresil.html" },
+                { name: "Thaïlande", image: "thailande.jpg", continent: "asia", link: "destinations/thailande.html" },
+                { name: "Égypte", image: "egypte.jpg", continent: "africa", link: "destinations/egypte.html" },
+                { name: "Norvège", image: "norvege.jpg", continent: "europe", link: "destinations/norvege.html" },
+                { name: "Tunisie", image: "tunisie.jpg", continent: "africa", link: "destinations/tunisie.html" },
+                { name: "Turquie", image: "turquie.jpg", continent: "europe", link: "destinations/turquie.html" },
+                { name: "Allemagne", image: "allemagne.jpg", continent: "europe", link: "destinations/allemagne.html" },
+                { name: "Tchad", image: "tchad.jpg", continent: "africa", link: "destinations/tchad.html" },
+                { name: "Inde", image: "inde.jpg", continent: "asia", link: "destinations/inde.html" },
+                { name: "Maldives", image: "maldives.jpg", continent: "asia", link: "destinations/maldives.html" },
+                { name: "Russie", image: "russie.jpg", continent: "europe", link: "destinations/russie.html" }
+            ];
+
+            // Éléments DOM
+            const grid = document.getElementById('destinations-grid');
+            const loadMoreBtn = document.getElementById('load-more');
+            const continentFilter = document.getElementById('continent-filter');
+            const resetFilterBtn = document.getElementById('reset-filter');
+            const counterDisplay = document.getElementById('destination-counter');
+
+            // Variables de contrôle
+            let currentIndex = 0;
+            const itemsPerLoad = 4;
+            let filteredData = [...destinationsData];
+
+            // Créer une carte de destination
+            function createCard(destination) {
+                const card = document.createElement('a');
+                card.href = destination.link;
+                card.className = 'destination-card';
+                card.setAttribute('data-continent', destination.continent);
+                card.innerHTML = `
+                    <div class="card-image" style="background-image: url('assets/img/destinations/${destination.image}')"></div>
+                    <div class="card-overlay">
+                        <h3>${destination.name}</h3>
+                        <span class="explore-btn">Voir détails <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                `;
+                return card;
+            }
+
+            // Charger les destinations
+            function loadDestinations() {
+                const fragment = document.createDocumentFragment();
+                const endIndex = Math.min(currentIndex + itemsPerLoad, filteredData.length);
+                
+                for (let i = currentIndex; i < endIndex; i++) {
+                    const card = createCard(filteredData[i]);
+                    fragment.appendChild(card);
+                }
+                
+                grid.appendChild(fragment);
+                currentIndex = endIndex;
+                
+                // Mettre à jour le compteur
+                updateCounter();
+                
+                // Masquer le bouton si tout est chargé
+                if (currentIndex >= filteredData.length) {
+                    loadMoreBtn.style.display = 'none';
+                }
+                
+                // Animer les nouvelles cartes
+                animateCards();
+            }
+
+            // Mettre à jour le compteur
+            function updateCounter() {
+                counterDisplay.textContent = `Affichage ${Math.min(currentIndex, filteredData.length)}/${filteredData.length} destinations`;
+            }
+
+            // Animer les cartes
+            function animateCards() {
+                const cards = document.querySelectorAll('.destination-card');
+                cards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.style.opacity = 1;
+                        card.style.transform = 'translateY(0)';
+                    }, 100 * index);
+                });
+            }
+
+            // Appliquer le filtre
+            function applyFilter() {
+                const continent = continentFilter.value;
+                filteredData = continent === 'all' 
+                    ? [...destinationsData] 
+                    : destinationsData.filter(d => d.continent === continent);
+                
+                // Réinitialiser
+                grid.innerHTML = '';
+                currentIndex = 0;
+                loadMoreBtn.style.display = 'block';
+                loadDestinations();
+            }
+
+            // Événements
+            loadMoreBtn.addEventListener('click', loadDestinations);
+            continentFilter.addEventListener('change', applyFilter);
+            resetFilterBtn.addEventListener('click', () => {
+                continentFilter.value = 'all';
+                applyFilter();
+            });
+
+            // Chargement initial
+            loadDestinations();
+        });
+    </script>
+</body>
+</html>

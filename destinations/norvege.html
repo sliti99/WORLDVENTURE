@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Norvège | Nom de votre agence</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .destination-hero {
+            height: 60vh;
+            background: linear-gradient(rgba(10, 36, 99, 0.8), rgba(10, 36, 99, 0.8)), 
+                        url('../assets/img/destinations/norvege.jpg') center/cover;
+            display: flex;
+            align-items: flex-end;
+            color: white;
+            padding: 0 5% 5%;
+        }
+        .destination-content { max-width: 1200px; margin: 50px auto; padding: 0 5%; }
+        .destination-highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin: 40px 0; }
+        .highlight-card { background: white; border-radius: 10px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); transition: transform 0.3s; }
+        .highlight-card:hover { transform: translateY(-5px); }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <header class="destination-hero">
+        <div>
+            <a href="../destinations.html" class="back-button"><i class="fas fa-arrow-left"></i> Retour aux destinations</a>
+            <h1>Norvège</h1>
+            <p class="subtitle">Découvrez les fjords et les aurores boréales</p>
+        </div>
+    </header>
+
+    <main class="destination-content">
+        <section>
+            <h2>La Norvège, une nature sauvage</h2>
+            <p>Entre fjords majestueux, montagnes escarpées et villages colorés, la Norvège est un paradis pour les amoureux de grands espaces.</p>
+        </section>
+
+        <section class="destination-highlights">
+            <div class="highlight-card">
+                <i class="fas fa-mountain fa-2x" style="color: #0a2463;"></i>
+                <h3>Fjords</h3>
+                <p>Geirangerfjord et Nærøyfjord classés à l'UNESCO.</p>
+            </div>
+            <div class="highlight-card">
+                <i class="fas fa-snowflake fa-2x" style="color: #0a2463;"></i>
+                <h3>Aurores</h3>
+                <p>Observations garanties en hiver dans le nord.</p>
+            </div>
+            <div class="highlight-card">
+                <i class="fas fa-hiking fa-2x" style="color: #0a2463;"></i>
+                <h3>Randonnée</h3>
+                <p>Sentiers spectaculaires comme Preikestolen.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Galerie Photo</h2>
+            <div class="gallery-grid">
+                <img src="../assets/img/destinations/norvege-1.jpg" alt="Fjord de Geiranger" class="gallery-img">
+                <img src="../assets/img/destinations/norvege-2.jpg" alt="Aurores boréales" class="gallery-img">
+                <img src="../assets/img/destinations/norvege-3.jpg" alt="Village de Bergen" class="gallery-img">
+            </div>
+        </section>
+
+        <section style="text-align: center; margin: 50px 0;">
+            <a href="../contact.html" class="vs-btn" style="padding: 15px 30px; font-size: 1.2rem;">
+                <i class="fas fa-paper-plane"></i> Demander un devis
+            </a>
+        </section>
+    </main>
+
+    <footer class="blue-footer">
+        <p>© 2023 Nom de votre agence. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>

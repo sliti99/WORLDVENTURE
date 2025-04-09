@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Destinations | WorldVenture</title>
+    <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="logo">
+                <img src="assets/img/logo.png" alt="Logo WorldVenture">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="backoffice.html"><i class="fas fa-tachometer-alt"></i> Tableau de Bord</a></li>
+                    <li class="active"><a href="#"><i class="fas fa-globe-europe"></i> Destinations</a></li>
+                    <li><a href="#"><i class="fas fa-tags"></i> Offres</a></li>
+                    <li><a href="#"><i class="fas fa-users"></i> Blog</a></li>
+                    <li><a href="#"><i class="fas fa-comment-alt"></i> Réclamation</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="user-actions">
+                    <span class="welcome">Bonjour, <strong>Admin</strong></span>
+                </div>
+            </header>
+
+            <section class="content-section">
+                <div class="section-header">
+                    <h1><i class="fas fa-globe-europe"></i> Gestion des destinations</h1>
+                    <button id="add-destination" class="vs-btn"><i class="fas fa-plus"></i> Ajouter</button>
+                </div>
+                
+                <div class="destinations-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>Nom</th>
+                                <th>Continent</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rempli dynamiquement par JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modale d'ajout -->
+    <div id="destination-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Ajouter une destination</h2>
+            <form id="destination-form">
+                <div class="form-group">
+                    <label for="destination-name">Nom</label>
+                    <input type="text" id="destination-name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="destination-continent">Continent</label>
+                    <select id="destination-continent" required>
+                        <option value="">Sélectionnez...</option>
+                        <option value="europe">Europe</option>
+                        <option value="asia">Asie</option>
+                        <option value="america">Amérique</option>
+                        <option value="africa">Afrique</option>
+                        <option value="oceania">Océanie</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="destination-image">Image</label>
+                    <input type="file" id="destination-image" accept="image/*" required>
+                </div>
+                
+                <button type="submit" class="vs-btn">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/admin.js"></script>
+</body>
+</html>
