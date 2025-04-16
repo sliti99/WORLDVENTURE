@@ -2,26 +2,72 @@
 require_once '../controllers/controller.php';
 $controller = new BlogController();
 $data = $controller->handleRequest();
+$is_admin = $data['is_admin'] ?? false; // Get admin status from controller
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Blog Management</title>
     <link rel="stylesheet" href="../../main_backoffice/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!-- Ensure Font Awesome is linked -->
+    <style>
+        .message {
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        .message.error {
+            background-color: #ffcccc;
+            border: 1px solid #ff8888;
+            color: #cc0000;
+        }
+        .message.success {
+            background-color: #ccffcc;
+            border: 1px solid #88ff88;
+            color: #006600;
+        }
+    </style>
     <script>
         function validateForm() {
             const title = document.getElementById('title').value.trim();
             const content = document.getElementById('content').value.trim();
+            let isValid = true;
+            let errorMessage = '';
+            
+            // Clear previous error if any
+            const existingError = document.querySelector('.form-error');
+            if (existingError) {
+                existingError.remove();
+            }
             
             if (!title) {
-                alert('Title is required.');
+                errorMessage = 'Title is required.';
+                isValid = false;
                 document.getElementById('title').focus();
-                return false;
+            } else if (title.length < 5) {
+                errorMessage = 'Title must be at least 5 characters long.';
+                isValid = false;
+                document.getElementById('title').focus();
             }
             
             if (!content) {
-                alert('Content is required.');
+                errorMessage = 'Content is required.';
+                isValid = false;
                 document.getElementById('content').focus();
+            } else if (content.length < 10) {
+                errorMessage = 'Content must be at least 10 characters long.';
+                isValid = false;
+                document.getElementById('content').focus();
+            }
+            
+            if (!isValid) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'message error form-error';
+                errorDiv.textContent = errorMessage;
+                
+                const form = document.querySelector('form');
+                form.insertAdjacentElement('afterbegin', errorDiv);
+                
                 return false;
             }
             
@@ -29,8 +75,8 @@ $data = $controller->handleRequest();
         }
         
         function confirmDelete(postId) {
-            if (confirm('Are you sure you want to delete this post?')) {
-                window.location.href = `?action=delete&id=${postId}`;
+            if (confirm('Are you sure you want to delete this post and all its comments?')) {
+                window.location.href = `../controllers/controller.php?action=delete&id=${postId}`;
             }
             return false;
         }
@@ -46,7 +92,7 @@ $data = $controller->handleRequest();
             <nav class="sidebar-nav">
                 <ul>
                     <li><a href="../../main_backoffice/index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                    <li class="active"><a href="#"><i class="fas fa-blog"></i> Blog</a></li>
+                    <li class="active"><a href="blog_backend.php"><i class="fas fa-blog"></i> Blog Management</a></li>
                 </ul>
             </nav>
         </aside>
@@ -55,65 +101,79 @@ $data = $controller->handleRequest();
             <div class="admin-header">
                 <h1><i class="fas fa-blog"></i> Blog Management</h1>
                 <div>
-                    <a href="blog_frontend.php" class="btn primary">View Blog</a>
+                    <a href="blog_frontend.php" class="btn primary" target="_blank">View Blog</a>
                 </div>
             </div>
 
-            <div class="data-card">
-                <h2>Add New Post</h2>
-                <form method="POST" action="blog_backend.php" onsubmit="return validateForm();">
-                    <input type="hidden" name="action" value="create">
-                    <div class="form-group">
-                        <label for="title">Title:</label>
-                        <input type="text" id="title" name="title">
-                    </div>
-                    <div class="form-group">
-                        <label for="content">Content:</label>
-                        <textarea id="content" name="content" rows="6"></textarea>
-                    </div>
-                    <button type="submit" class="btn primary">Add Post</button>
-                </form>
-            </div>
+            <!-- Display messages if any -->
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="message error">
+                    <?= htmlspecialchars($_SESSION['error']) ?>
+                </div>
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
+            
+            <?php if (isset($_SESSION['message'])): ?>
+                <div class="message success">
+                    <?= htmlspecialchars($_SESSION['message']) ?>
+                </div>
+                <?php unset($_SESSION['message']); ?>
+            <?php endif; ?>
 
-            <div class="data-card">
-                <h2>All Posts</h2>
-                <?php if (isset($data['posts']) && count($data['posts']) > 0): ?>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Date</th>
-                                    <th>Comments</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($data['posts'] as $post): ?>
+            <?php if ($is_admin): // Only show forms/tables if admin ?>
+                <div class="data-card">
+                    <h2>Add New Post</h2>
+                    <form method="POST" action="../controllers/controller.php" onsubmit="return validateForm();"> <!-- Point form action to the controller -->
+                        <input type="hidden" name="action" value="create">
+                        <div class="form-group">
+                            <label for="title">Title:</label>
+                            <input type="text" id="title" name="title" class="form-control"> <!-- Added form-control class if available in your CSS -->
+                        </div>
+                        <div class="form-group">
+                            <label for="content">Content:</label>
+                            <textarea id="content" name="content" rows="6" class="form-control"></textarea> <!-- Added form-control class -->
+                        </div>
+                        <button type="submit" class="btn primary">Add Post</button>
+                    </form>
+                </div>
+
+                <div class="data-card">
+                    <h2>All Posts</h2>
+                    <?php if (isset($data['posts']) && count($data['posts']) > 0): ?>
+                        <div class="table-container">
+                            <table>
+                                <thead>
                                     <tr>
-                                        <td><?= htmlspecialchars($post['title']) ?></td>
-                                        <td><?= $post['created_at'] ?></td>
-                                        <td>
-                                            <?php
-                                            $commentCount = 0;
-                                            foreach ($data['comments'] as $comment) {
-                                                if ($comment['post_id'] == $post['id']) $commentCount++;
-                                            }
-                                            echo $commentCount;
-                                            ?>
-                                        </td>
-                                        <td>
-                                            <a href="javascript:void(0);" onclick="confirmDelete(<?= $post['id'] ?>)" class="btn-sm">Delete</a>
-                                        </td>
+                                        <th>Title</th>
+                                        <th>Date</th>
+                                        <th>Comments</th>
+                                        <th>Reactions</th>
+                                        <th>Actions</th>
                                     </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php else: ?>
-                    <p>No blog posts available.</p>
-                <?php endif; ?>
-            </div>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($data['posts'] as $post): ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($post['title']) ?></td>
+                                            <td><?= date('Y-m-d', strtotime($post['created_at'])) ?></td>
+                                            <td><?= $post['comment_count'] ?? 0 ?></td>
+                                            <td><?= $post['reactions'] ?? 0 ?></td>
+                                            <td>
+                                                <a href="edit_post.php?action=edit&id=<?= $post['id'] ?>" class="btn-sm btn-outline">Edit</a> <!-- Link to edit page -->
+                                                <a href="#" onclick="return confirmDelete(<?= $post['id'] ?>)" class="btn-sm btn-danger">Delete</a> <!-- Use btn-danger or similar for delete -->
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <p>No blog posts available.</p>
+                    <?php endif; ?>
+                </div>
+            <?php else: ?>
+                <p>You do not have permission to manage blog posts.</p>
+            <?php endif; ?>
         </main>
     </div>
 
