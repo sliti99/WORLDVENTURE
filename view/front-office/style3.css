@@ -1,0 +1,235 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+  
+  header {
+    background-color: #4285F4;
+    color: white;
+    padding: 20px;
+  }
+  
+  button {
+    padding: 12px 24px;
+    font-size: 18px;
+    background-color: #4285F4;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 30px;
+  }
+  
+  h1 {
+    font-size: 24px;
+  }
+  
+  iframe {
+    width: 100%;
+    height: 500px;
+    border: none;
+  }
+  
+  #offer-info {
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    width: 80%;
+    margin: auto;
+    display: none;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  table th, table td {
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  img {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 20px;
+  }
+  
+  /* Folder Styles */
+  .folder-container {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-size: 0.9rem;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    color: #333;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .form-control:focus {
+    outline: none;
+    border-color: #4285F4;
+    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+  }
+  
+  .date-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  
+  select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+  }
+  
+  .radio-group {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: #333;
+  }
+  
+  .radio-label input[type="radio"] {
+    appearance: none;
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 2px solid #4285F4;
+    border-radius: 50%;
+    margin: 0;
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .radio-label input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    width: 0.6rem;
+    height: 0.6rem;
+    background: #4285F4;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .btn-adventure {
+    width: 100%;
+    padding: 1rem;
+    background-color: #4285F4;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 0;
+  }
+  
+  .btn-adventure:hover {
+    background-color: #3367D6;
+    transform: translateY(-1px);
+  }
+  
+  .divider {
+    margin: 2rem 0;
+    text-align: center;
+    position: relative;
+  }
+  
+  .divider::before,
+  .divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background: #e0e0e0;
+  }
+  
+  .divider::before {
+    left: 0;
+  }
+  
+  .divider::after {
+    right: 0;
+  }
+  
+  .divider span {
+    background: #f9f9f9;
+    padding: 0 1rem;
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  /* Error states */
+  .form-control.error {
+    border-color: #d93025;
+  }
+  
+  .error-message {
+    color: #d93025;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .folder-container {
+      margin: 1rem;
+      padding: 1.5rem;
+    }
+    
+    .date-group {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+    
+    .radio-group {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+  
