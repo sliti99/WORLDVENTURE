@@ -1,0 +1,31 @@
+[28-Apr-2025 14:20:59 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\config\auth.php on line 3
+[28-Apr-2025 14:21:23 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\config\auth.php on line 3
+[28-Apr-2025 14:37:53 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "Database" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\config\auth.php:12
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\login.php(21): login('admin@example.c...', '$2y$10$92IXUNpk...')
+#1 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\config\auth.php on line 12
+[28-Apr-2025 14:37:56 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "Database" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\config\auth.php:12
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\login.php(21): login('admin@example.c...', '$2y$10$92IXUNpk...')
+#1 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\config\auth.php on line 12
+[28-Apr-2025 14:38:25 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "Database" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\config\auth.php:12
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\login.php(21): login('user@example.co...', '$2y$10$exampleP...')
+#1 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\config\auth.php on line 12
+[28-Apr-2025 14:38:32 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "Database" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\config\auth.php:12
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\login.php(21): login('user@example.co...', '$2y$10$exampleP...')
+#1 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\config\auth.php on line 12
+[28-Apr-2025 15:21:08 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "Database" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\config\auth.php:12
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\login.php(21): login('user@example.co...', '$2y$10$exampleP...')
+#1 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\config\auth.php on line 12
+[28-Apr-2025 15:38:13 Europe/Berlin] PHP Fatal error:  Uncaught Error: Cannot access private property BlogController::$model in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\post_details.php:480
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\post_details.php on line 480

@@ -14,7 +14,7 @@ class BlogController {
         // Ensure default role/user ID if not set (for testing)
         if (!isset($_SESSION['role'])) {
             $_SESSION['role'] = 'visitor';
-            $_SESSION['user_id'] = 1; // Default visitor/test user ID
+            $_SESSION['user_id'] = 0; // Default visitor ID
         }
     }
 
@@ -36,16 +36,22 @@ class BlogController {
 
     // Main request handler
     public function handleRequest() {
+        // Clear any previous output and start fresh buffer
+        while (ob_get_level()) ob_end_clean();
+        
         // Check if request is AJAX
         $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 
                   strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+        
+        if ($isAjax) {
+            header('Content-Type: application/json');
+        }
         
         $action = $_POST['action'] ?? $_GET['action'] ?? 'list';
         $requestData = [];
 
         // Handle JSON request data for AJAX POST
         if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            header('Content-Type: application/json');
             $input = file_get_contents('php://input');
             $data = json_decode($input, true);
             
@@ -71,10 +77,18 @@ class BlogController {
         switch ($action) {
             case 'list':
                 if ($isAjax) {
-                    echo json_encode(['posts' => $this->model->getAllPosts()]);
+                    try {
+                        $posts = $this->model->getAllPosts();
+                        if ($posts === false) {
+                            throw new Exception("Failed to fetch posts");
+                        }
+                        echo json_encode(['posts' => $posts], JSON_THROW_ON_ERROR);
+                    } catch (Exception $e) {
+                        http_response_code(500);
+                        echo json_encode(['error' => $e->getMessage()], JSON_THROW_ON_ERROR);
+                    }
                     exit;
                 } else {
-                    // For non-AJAX, return data for template rendering (e.g., backend)
                     return [
                         'posts' => $this->model->getAllPosts(),
                         'comments' => $this->model->getAllComments()
@@ -178,11 +192,55 @@ class BlogController {
                      exit;
                  }
                  
-                 $count = $this->model->toggleReaction($postId, $_SESSION['user_id']);
-                 echo json_encode(['success' => true, 'count' => $count]);
+                 try {
+                     $count = $this->model->toggleReaction($postId, $_SESSION['user_id']);
+                     // Check if user has already reacted to highlight the button
+                     $hasReacted = $this->model->hasUserReacted($postId, $_SESSION['user_id'], 'post');
+                     echo json_encode([
+                         'success' => true, 
+                         'count' => $count,
+                         'hasReacted' => $hasReacted
+                     ]);
+                 } catch (Exception $e) {
+                     echo json_encode(['error' => $e->getMessage()]);
+                 }
                  exit;
                  break;
                  
+            case 'reactToComment': // Handles AJAX comment reaction toggle
+                if (!$isAjax) die('Invalid request method for comment reaction.');
+                
+                $commentId = $requestData['commentId'] ?? null;
+                if (!$commentId) {
+                    echo json_encode(['error' => 'Comment ID is required for reaction']);
+                    exit;
+                }
+                
+                try {
+                    $count = $this->model->toggleCommentReaction($commentId, $_SESSION['user_id']);
+                    echo json_encode(['success' => true, 'count' => $count]);
+                } catch (Exception $e) {
+                    echo json_encode(['error' => $e->getMessage()]);
+                }
+                exit;
+                break;
+
+            case 'hasReacted': // Check if user has already reacted
+                if (!$isAjax) die('Invalid request method.');
+                
+                $type = $requestData['type'] ?? 'post';
+                $itemId = $requestData['itemId'] ?? null;
+                
+                if (!$itemId) {
+                    echo json_encode(['error' => 'Item ID is required']);
+                    exit;
+                }
+                
+                $hasReacted = $this->model->hasUserReacted($itemId, $_SESSION['user_id'], $type);
+                echo json_encode(['hasReacted' => $hasReacted]);
+                exit;
+                break;
+
             case 'switchRole': // Handles AJAX role switching for testing
                 if (!$isAjax) die('Invalid request method for role switch.');
                 
@@ -228,8 +286,31 @@ class BlogController {
         return $this->model->getCommentsByPostId($postId);
     }
 
-    // Helper for input sanitization
-    private function sanitizeInput($data) {
+    // Get latest posts (limit parameter for controlling number of posts returned)
+    public function getLatestPosts($limit = 3) {
+        if (!$this->checkPermission('view')) {
+            die('Permission denied to view posts.');
+        }
+        return $this->model->getLatestPosts($limit);
+    }
+
+    // Public method to add a comment (callable directly from views)
+    public function addComment($postId, $content) {
+        // Check permissions
+        if (!$this->checkPermission('comment')) {
+            throw new Exception('Permission denied: You must be logged in to comment.');
+        }
+        
+        // Basic validation
+        if (strlen($content) < 3) {
+            throw new Exception('Comment must be at least 3 characters long.');
+        }
+        
+        return $this->model->addComment($postId, $content);
+    }
+
+    // Helper for input sanitization (make it public so views can use it)
+    public function sanitizeInput($data) {
         return htmlspecialchars(trim($data ?? ''));
     }
 }

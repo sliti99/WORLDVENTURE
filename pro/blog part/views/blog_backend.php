@@ -135,6 +135,67 @@ $data = $controller->handleRequest();
             display: flex;
             gap: 0.5rem;
         }
+
+        /* Facebook-like form styling */
+        .admin-post-creation {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .btn-attach {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            background: #f1f5f9;
+            border-radius: 20px;
+            cursor: pointer;
+            color: #64748b;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-attach:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+        
+        .validation-error {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        
+        .post-title-input:focus, .form-group textarea:focus {
+            border-color: var(--bleu);
+            box-shadow: 0 0 0 2px rgba(62, 146, 204, 0.2);
+            outline: none;
+        }
+        
+        .btn.primary {
+            background: linear-gradient(135deg, #3e92cc, #0a4c8c);
+            color: white;
+            border-radius: 20px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(10, 76, 140, 0.2);
+        }
     </style>
     <script>
         function validateForm() {
@@ -178,6 +239,75 @@ $data = $controller->handleRequest();
                 toast.className = 'toast';
             }, 3000);
         }
+
+        // Enhanced form validation for Facebook-like experience
+        document.addEventListener('DOMContentLoaded', function() {
+            const titleInput = document.getElementById('title');
+            const contentInput = document.getElementById('content');
+            const titleError = document.getElementById('titleError');
+            const contentError = document.getElementById('contentError');
+            
+            // Live validation as user types
+            titleInput.addEventListener('input', function() {
+                validateTitle();
+            });
+            
+            contentInput.addEventListener('input', function() {
+                validateContent();
+            });
+            
+            function validateTitle() {
+                const title = titleInput.value.trim();
+                if (!title) {
+                    titleError.textContent = 'Please provide a title for your post';
+                    titleError.style.display = 'block';
+                    titleInput.style.borderColor = '#ef4444';
+                    return false;
+                } else if (title.length < 3) {
+                    titleError.textContent = 'Title should be at least 3 characters long';
+                    titleError.style.display = 'block';
+                    titleInput.style.borderColor = '#ef4444';
+                    return false;
+                } else {
+                    titleError.style.display = 'none';
+                    titleInput.style.borderColor = '#e2e8f0';
+                    return true;
+                }
+            }
+            
+            function validateContent() {
+                const content = contentInput.value.trim();
+                if (!content) {
+                    contentError.textContent = 'Please write something in your post';
+                    contentError.style.display = 'block';
+                    contentInput.style.borderColor = '#ef4444';
+                    return false;
+                } else if (content.length < 10) {
+                    contentError.textContent = `Add ${10 - content.length} more character${content.length === 9 ? '' : 's'} to continue`;
+                    contentError.style.display = 'block';
+                    contentInput.style.borderColor = '#ef4444';
+                    return false;
+                } else {
+                    contentError.style.display = 'none';
+                    contentInput.style.borderColor = '#e2e8f0';
+                    return true;
+                }
+            }
+            
+            // Override form submit to use our enhanced validation
+            document.querySelector('form').addEventListener('submit', function(event) {
+                const isTitleValid = validateTitle();
+                const isContentValid = validateContent();
+                
+                if (!isTitleValid || !isContentValid) {
+                    event.preventDefault();
+                    showToast('Please fix the errors before publishing', true);
+                    return false;
+                }
+                
+                return true;
+            });
+        });
     </script>
 </head>
 <body>
@@ -192,6 +322,7 @@ $data = $controller->handleRequest();
                     <li><a href="../../main_backoffice/index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                     <li class="active"><a href="#"><i class="fas fa-blog"></i> Blog</a></li>
                     <li><a href="blog_frontend.php"><i class="fas fa-globe"></i> View Blog</a></li>
+                    <li><a href="blog_frontend.php"><i class="fas fa-arrow-left"></i> Return to FrontOffice</a></li>
                 </ul>
             </nav>
             
@@ -212,22 +343,35 @@ $data = $controller->handleRequest();
                 </div>
             </div>
 
+            <!-- Enhanced Facebook-like post creation interface -->
             <div class="data-card">
-                <h2><i class="fas fa-plus-circle"></i> Add New Post</h2>
-                <form method="POST" action="blog_backend.php" onsubmit="return validateForm();">
-                    <input type="hidden" name="action" value="create">
-                    <div class="form-group">
-                        <label for="title">Title:</label>
-                        <input type="text" id="title" name="title" placeholder="Enter post title...">
-                    </div>
-                    <div class="form-group">
-                        <label for="content">Content:</label>
-                        <textarea id="content" name="content" rows="6" placeholder="Write your post content..."></textarea>
-                    </div>
-                    <button type="submit" class="btn primary">
-                        <i class="fas fa-plus"></i> Add Post
-                    </button>
-                </form>
+                <h2><i class="fas fa-plus-circle"></i> Create New Blog Post</h2>
+                <div class="admin-post-creation">
+                    <form method="POST" action="blog_backend.php" onsubmit="return validateForm();">
+                        <input type="hidden" name="action" value="create">
+                        <div class="form-group">
+                            <label for="title">Post Title:</label>
+                            <input type="text" id="title" name="title" placeholder="What's on your mind today?" class="post-title-input">
+                            <div id="titleError" class="validation-error">Title cannot be empty</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="content">Post Content:</label>
+                            <textarea id="content" name="content" rows="6" placeholder="Share something with your audience..."></textarea>
+                            <div id="contentError" class="validation-error">Content must be at least 10 characters long</div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-attach">
+                                <i class="fas fa-image"></i> Add Image
+                            </button>
+                            <button type="button" class="btn-attach">
+                                <i class="fas fa-tags"></i> Add Tags
+                            </button>
+                            <button type="submit" class="btn primary">
+                                <i class="fas fa-paper-plane"></i> Publish Post
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <div class="data-card">
@@ -254,7 +398,8 @@ $data = $controller->handleRequest();
                                         <td><?= date('M d, Y', strtotime($post['created_at'])) ?></td>
                                         <td>
                                             <span class="badge primary">
-                                                <i class="fas fa-thumbs-up"></i> <?= $post['reactions'] ?>
+                                                <i class="fas fa-thumbs-up"></i> <span id="reaction-count-<?= $post['id'] ?>"><?= $post['reactions'] ?></span>
+                                                <button class="btn-sm" style="margin-left:8px;" onclick="handleReaction(<?= $post['id'] ?>)"><i class="fas fa-thumbs-up"></i> Like</button>
                                             </span>
                                             <span class="badge success">
                                                 <i class="fas fa-comment"></i>
@@ -308,6 +453,35 @@ $data = $controller->handleRequest();
                 showToast('Post deleted successfully!');
             <?php endif; ?>
         });
+
+        function handleReaction(postId) {
+            fetch('blog_backend.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    ajax: true,
+                    action: 'react',
+                    postId: postId
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    showToast(data.error, true);
+                    return;
+                }
+                if (data.success) {
+                    document.getElementById(`reaction-count-${postId}`).textContent = data.count;
+                    showToast('Reaction updated!');
+                }
+            })
+            .catch(err => {
+                showToast('Error updating reaction', true);
+            });
+        }
     </script>
 </body>
 </html>
