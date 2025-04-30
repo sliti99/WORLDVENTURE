@@ -1,24 +1,22 @@
 <?php
-require_once '../models/model.php';
-
-// Start session if not already started
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+require_once '../config/config.php';
 
 class BlogController {
     private $model;
+    private $pdo;
 
     public function __construct() {
         $this->model = new BlogModel();
-        // Ensure default role/user ID if not set (for testing)
+        $this->pdo = Database::getInstance()->getConnection();
+        
+        // Ensure default role/user ID if not set
         if (!isset($_SESSION['role'])) {
             $_SESSION['role'] = 'visitor';
             $_SESSION['user_id'] = 0; // Default visitor ID
         }
     }
 
-    // Check user permissions based on role
+    // PERMISSION HANDLING
     private function checkPermission($action) {
         $role = $_SESSION['role'] ?? 'visitor';
         
@@ -34,7 +32,19 @@ class BlogController {
         return in_array($action, $permissions[$role] ?? []);
     }
 
-    // Main request handler
+    // CONTENT PROFANITY CHECK
+    private function containsProfanity(string $text): bool {
+        // Define your banned words here
+        $bannedWords = ['badword1', 'badword2', 'anotherbadword'];
+        foreach ($bannedWords as $word) {
+            if (preg_match('/\b'.preg_quote($word,'/').'\b/i', $text)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // MAIN REQUEST HANDLER
     public function handleRequest() {
         // Clear any previous output and start fresh buffer
         while (ob_get_level()) ob_end_clean();
@@ -77,29 +87,166 @@ class BlogController {
         switch ($action) {
             case 'list':
                 if ($isAjax) {
-                    try {
-                        $posts = $this->model->getAllPosts();
-                        if ($posts === false) {
-                            throw new Exception("Failed to fetch posts");
-                        }
-                        echo json_encode(['posts' => $posts], JSON_THROW_ON_ERROR);
-                    } catch (Exception $e) {
-                        http_response_code(500);
-                        echo json_encode(['error' => $e->getMessage()], JSON_THROW_ON_ERROR);
+                    // SQL queries moved into controller
+                    $stmt = $this->pdo->query("SELECT * FROM posts ORDER BY created_at DESC");
+                    $postsData = $stmt->fetchAll();
+                    
+                    $posts = [];
+                    foreach ($postsData as $postData) {
+                        $post = new Post();
+                        $post->setId($postData['id']);
+                        $post->setTitle($postData['title']);
+                        $post->setContent($postData['content']);
+                        $post->setAuthorId($postData['author_id']);
+                        $post->setPhotoPath($postData['photo_path']);
+                        $post->setLatitude($postData['latitude']);
+                        $post->setLongitude($postData['longitude']);
+                        $post->setCreatedAt($postData['created_at']);
+                        
+                        // Get reaction count for this post
+                        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM reactions_log WHERE item_id = :postId AND type = 'post'");
+                        $stmt->execute(['postId' => $post->getId()]);
+                        $post->setReactions($stmt->fetchColumn());
+                        
+                        $posts[] = $post;
                     }
+                    $this->model->setPosts($posts);
+                    
+                    // Get comments
+                    $stmt = $this->pdo->query("SELECT c.*, u.name AS author_name FROM comments c JOIN users u ON c.user_id = u.id ORDER BY c.created_at ASC");
+                    $commentsData = $stmt->fetchAll();
+                    
+                    $comments = [];
+                    foreach ($commentsData as $commentData) {
+                        $comment = new Comment();
+                        $comment->setId($commentData['id']);
+                        $comment->setPostId($commentData['post_id']);
+                        $comment->setContent($commentData['content']);
+                        $comment->setUserId($commentData['user_id']);
+                        $comment->setCreatedAt($commentData['created_at']);
+                        $comment->setAuthorName($commentData['author_name']);
+                        
+                        // Get reaction count for this comment
+                        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM reactions_log WHERE item_id = :commentId AND type = 'comment'");
+                        $stmt->execute(['commentId' => $comment->getId()]);
+                        $comment->setReactions($stmt->fetchColumn());
+                        
+                        $comments[] = $comment;
+                    }
+                    $this->model->setComments($comments);
+                    
+                    // Convert models to array for JSON response
+                    $postsArray = array_map(function($post) {
+                        return [
+                            'id' => $post->getId(),
+                            'title' => $post->getTitle(),
+                            'content' => $post->getContent(),
+                            'author_id' => $post->getAuthorId(),
+                            'photo_path' => $post->getPhotoPath(),
+                            'latitude' => $post->getLatitude(),
+                            'longitude' => $post->getLongitude(),
+                            'created_at' => $post->getCreatedAt(),
+                            'reactions' => $post->getReactions()
+                        ];
+                    }, $this->model->getPosts());
+                    
+                    $commentsArray = array_map(function($comment) {
+                        return [
+                            'id' => $comment->getId(),
+                            'post_id' => $comment->getPostId(),
+                            'content' => $comment->getContent(),
+                            'user_id' => $comment->getUserId(),
+                            'created_at' => $comment->getCreatedAt(),
+                            'author_name' => $comment->getAuthorName(),
+                            'reactions' => $comment->getReactions()
+                        ];
+                    }, $this->model->getComments());
+                    
+                    echo json_encode(['posts' => $postsArray, 'comments' => $commentsArray], JSON_THROW_ON_ERROR);
                     exit;
                 } else {
-                    return [
-                        'posts' => $this->model->getAllPosts(),
-                        'comments' => $this->model->getAllComments()
-                    ];
+                    // Non-AJAX response - prepare data for view
+                    $stmt = $this->pdo->query("SELECT p.*, u.name AS author_name FROM posts p LEFT JOIN users u ON p.author_id = u.id ORDER BY p.created_at DESC");
+                    $postsData = $stmt->fetchAll();
+                    
+                    $posts = [];
+                    foreach ($postsData as $postData) {
+                        $post = new Post();
+                        $post->setId($postData['id']);
+                        $post->setTitle($postData['title']);
+                        $post->setContent($postData['content']);
+                        $post->setAuthorId($postData['author_id']);
+                        $post->setPhotoPath($postData['photo_path']);
+                        $post->setLatitude($postData['latitude']);
+                        $post->setLongitude($postData['longitude']);
+                        $post->setCreatedAt($postData['created_at']);
+                        
+                        // Get reaction count
+                        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM reactions_log WHERE item_id = :postId AND type = 'post'");
+                        $stmt->execute(['postId' => $post->getId()]);
+                        $post->setReactions($stmt->fetchColumn());
+                        
+                        $posts[] = $post;
+                    }
+                    $this->model->setPosts($posts);
+                    
+                    // Get comments
+                    $stmt = $this->pdo->query("SELECT c.*, u.name AS author_name FROM comments c JOIN users u ON c.user_id = u.id ORDER BY c.created_at ASC");
+                    $commentsData = $stmt->fetchAll();
+                    
+                    $comments = [];
+                    foreach ($commentsData as $commentData) {
+                        $comment = new Comment();
+                        $comment->setId($commentData['id']);
+                        $comment->setPostId($commentData['post_id']);
+                        $comment->setContent($commentData['content']);
+                        $comment->setUserId($commentData['user_id']);
+                        $comment->setCreatedAt($commentData['created_at']);
+                        $comment->setAuthorName($commentData['author_name']);
+                        
+                        // Get reaction count
+                        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM reactions_log WHERE item_id = :commentId AND type = 'comment'");
+                        $stmt->execute(['commentId' => $comment->getId()]);
+                        $comment->setReactions($stmt->fetchColumn());
+                        
+                        $comments[] = $comment;
+                    }
+                    $this->model->setComments($comments);
+                    
+                    // Convert to arrays for the view
+                    $postsArray = array_map(function($post) {
+                        return [
+                            'id' => $post->getId(),
+                            'title' => $post->getTitle(),
+                            'content' => $post->getContent(),
+                            'author_id' => $post->getAuthorId(),
+                            'photo_path' => $post->getPhotoPath(),
+                            'latitude' => $post->getLatitude(),
+                            'longitude' => $post->getLongitude(),
+                            'created_at' => $post->getCreatedAt(),
+                            'reactions' => $post->getReactions()
+                        ];
+                    }, $this->model->getPosts());
+                    
+                    $commentsArray = array_map(function($comment) {
+                        return [
+                            'id' => $comment->getId(),
+                            'post_id' => $comment->getPostId(),
+                            'content' => $comment->getContent(),
+                            'user_id' => $comment->getUserId(),
+                            'created_at' => $comment->getCreatedAt(),
+                            'author_name' => $comment->getAuthorName(),
+                            'reactions' => $comment->getReactions()
+                        ];
+                    }, $this->model->getComments());
+                    
+                    return ['posts' => $postsArray, 'comments' => $commentsArray];
                 }
-                break;
 
-            case 'create': // Handles both AJAX and form submission
-                $title = $this->sanitizeInput($requestData['title'] ?? '');
-                $content = $this->sanitizeInput($requestData['content'] ?? '');
-
+            case 'create':
+                $title = $requestData['title'];
+                $content = $requestData['content'];
+                
                 if (empty($title) || empty($content)) {
                     if ($isAjax) {
                         echo json_encode(['error' => 'Title and content are required']);
@@ -117,12 +264,29 @@ class BlogController {
                     die('Content must be at least 10 characters long.');
                 }
 
-                $postId = $this->model->createPost($title, $content);
+                // Profanity check for title/content
+                if ($this->containsProfanity($title) || $this->containsProfanity($content)) {
+                    if ($isAjax) {
+                        echo json_encode(['error' => 'Inappropriate content detected']);
+                        exit;
+                    }
+                    die('Inappropriate content detected in your post.');
+                }
+
+                // SQL query in controller
+                $stmt = $this->pdo->prepare("INSERT INTO posts (title, content, author_id, created_at) VALUES (:title, :content, :authorId, NOW())");
+                $stmt->execute([
+                    'title' => $title,
+                    'content' => $content,
+                    'authorId' => $_SESSION['user_id']
+                ]);
+                $postId = $this->pdo->lastInsertId();
                 
                 if ($isAjax) {
+                    $post = $this->getPostByIdRaw($postId);
                     echo json_encode([
                         'success' => true,
-                        'post' => $this->model->getPostById($postId) // Return the created post
+                        'post' => $post
                     ]);
                     exit;
                 } else {
@@ -130,9 +294,8 @@ class BlogController {
                     header('Location: blog_backend.php?success=created');
                     exit;
                 }
-                break;
 
-            case 'delete': // Handles both AJAX and GET requests
+            case 'delete':
                 $id = $requestData['id'] ?? null;
                 if (!$id) {
                     if ($isAjax) {
@@ -151,7 +314,9 @@ class BlogController {
                     die('Permission denied: Only admins can delete posts.');
                 }
 
-                $this->model->deletePost($id);
+                // SQL query in controller
+                $stmt = $this->pdo->prepare("DELETE FROM posts WHERE id = :id");
+                $stmt->execute(['id' => $id]);
                 
                 if ($isAjax) {
                     echo json_encode(['success' => true]);
@@ -161,53 +326,92 @@ class BlogController {
                     header('Location: blog_backend.php?deleted=true');
                     exit;
                 }
-                break;
 
-            case 'addComment': // Handles standard form submission from post_details.php
+            case 'addComment':
                 $postId = $requestData['post_id'] ?? null;
                 $content = $this->sanitizeInput($requestData['comment'] ?? '');
 
                 if (!$postId || !$content) {
-                    // Handle error appropriately, maybe redirect back with error message
+                    if ($isAjax) { 
+                        echo json_encode(['error' => 'Post ID and comment content are required']); 
+                        exit; 
+                    }
                     die('Post ID and comment content are required.');
                 }
                 
                 // Basic validation
-                 if (strlen($content) < 3) {
-                    // Redirect back with error? For now, just die.
+                if (strlen($content) < 3) {
+                    if ($isAjax) { 
+                        echo json_encode(['error' => 'Comment must be at least 3 characters long']); 
+                        exit; 
+                    }
                     die('Comment must be at least 3 characters long.');
                 }
+                
+                // Profanity check for comment content
+                if ($this->containsProfanity($content)) {
+                    if ($isAjax) {
+                        echo json_encode(['error' => 'Inappropriate content detected']);
+                        exit;
+                    }
+                    die('Inappropriate content detected in your comment.');
+                }
 
-                $this->model->addComment($postId, $content);
+                // SQL query in controller
+                $stmt = $this->pdo->prepare("INSERT INTO comments (post_id, content, user_id, created_at) VALUES (:postId, :content, :userId, NOW())");
+                $stmt->execute([
+                    'postId' => $postId,
+                    'content' => $content,
+                    'userId' => $_SESSION['user_id']
+                ]);
+                $commentId = $this->pdo->lastInsertId();
+                
+                // AJAX comment submission
+                if ($isAjax) {
+                    $stmt = $this->pdo->prepare("SELECT c.*, u.name AS author_name FROM comments c JOIN users u ON c.user_id = u.id WHERE c.id = :id");
+                    $stmt->execute(['id' => $commentId]);
+                    $commentData = $stmt->fetch();
+                    
+                    echo json_encode(['success' => true, 'comment' => $commentData]);
+                    exit;
+                }
+
                 header("Location: ../views/post_details.php?id=$postId&comment_success=true");
                 exit;
-                break;
+
+            case 'react':
+                if (!$isAjax) die('Invalid request method for reaction.');
+                 
+                $postId = $requestData['postId'] ?? null;
+                if (!$postId) {
+                    echo json_encode(['error' => 'Post ID is required for reaction']);
+                    exit;
+                }
                 
-            case 'react': // Handles AJAX reaction toggle
-                 if (!$isAjax) die('Invalid request method for reaction.');
-                 
-                 $postId = $requestData['postId'] ?? null;
-                 if (!$postId) {
-                     echo json_encode(['error' => 'Post ID is required for reaction']);
-                     exit;
-                 }
-                 
-                 try {
-                     $count = $this->model->toggleReaction($postId, $_SESSION['user_id']);
-                     // Check if user has already reacted to highlight the button
-                     $hasReacted = $this->model->hasUserReacted($postId, $_SESSION['user_id'], 'post');
-                     echo json_encode([
-                         'success' => true, 
-                         'count' => $count,
-                         'hasReacted' => $hasReacted
-                     ]);
-                 } catch (Exception $e) {
-                     echo json_encode(['error' => $e->getMessage()]);
-                 }
-                 exit;
-                 break;
-                 
-            case 'reactToComment': // Handles AJAX comment reaction toggle
+                // SQL query in controller
+                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM reactions_log WHERE user_id=:userId AND item_id=:itemId AND type='post'");
+                $stmt->execute(['userId' => $_SESSION['user_id'], 'itemId' => $postId]);
+                
+                if ((int)$stmt->fetchColumn() > 0) {
+                    $stmt = $this->pdo->prepare("DELETE FROM reactions_log WHERE user_id=:userId AND item_id=:itemId AND type='post'");
+                    $stmt->execute(['userId' => $_SESSION['user_id'], 'itemId' => $postId]);
+                } else {
+                    $stmt = $this->pdo->prepare("INSERT INTO reactions_log (user_id, item_id, type, created_at) VALUES (:userId, :itemId, 'post', NOW())");
+                    $stmt->execute(['userId' => $_SESSION['user_id'], 'itemId' => $postId]);
+                }
+                
+                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM reactions_log WHERE item_id=:itemId AND type='post'");
+                $stmt->execute(['itemId' => $postId]);
+                $count = (int)$stmt->fetchColumn();
+                
+                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM reactions_log WHERE user_id=:userId AND item_id=:itemId AND type='post'");
+                $stmt->execute(['userId' => $_SESSION['user_id'], 'itemId' => $postId]);
+                $hasReacted = (int)$stmt->fetchColumn() > 0;
+                
+                echo json_encode(['success' => true, 'count' => $count, 'hasReacted' => $hasReacted]);
+                exit;
+
+            case 'reactToComment':
                 if (!$isAjax) die('Invalid request method for comment reaction.');
                 
                 $commentId = $requestData['commentId'] ?? null;
@@ -216,16 +420,26 @@ class BlogController {
                     exit;
                 }
                 
-                try {
-                    $count = $this->model->toggleCommentReaction($commentId, $_SESSION['user_id']);
-                    echo json_encode(['success' => true, 'count' => $count]);
-                } catch (Exception $e) {
-                    echo json_encode(['error' => $e->getMessage()]);
+                // SQL query in controller
+                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM reactions_log WHERE user_id=:userId AND item_id=:itemId AND type='comment'");
+                $stmt->execute(['userId' => $_SESSION['user_id'], 'itemId' => $commentId]);
+                
+                if ((int)$stmt->fetchColumn() > 0) {
+                    $stmt = $this->pdo->prepare("DELETE FROM reactions_log WHERE user_id=:userId AND item_id=:itemId AND type='comment'");
+                    $stmt->execute(['userId' => $_SESSION['user_id'], 'itemId' => $commentId]);
+                } else {
+                    $stmt = $this->pdo->prepare("INSERT INTO reactions_log (user_id, item_id, type, created_at) VALUES (:userId, :itemId, 'comment', NOW())");
+                    $stmt->execute(['userId' => $_SESSION['user_id'], 'itemId' => $commentId]);
                 }
+                
+                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM reactions_log WHERE item_id=:itemId AND type='comment'");
+                $stmt->execute(['itemId' => $commentId]);
+                $count = (int)$stmt->fetchColumn();
+                
+                echo json_encode(['success' => true, 'count' => $count]);
                 exit;
-                break;
 
-            case 'hasReacted': // Check if user has already reacted
+            case 'hasReacted':
                 if (!$isAjax) die('Invalid request method.');
                 
                 $type = $requestData['type'] ?? 'post';
@@ -236,12 +450,19 @@ class BlogController {
                     exit;
                 }
                 
-                $hasReacted = $this->model->hasUserReacted($itemId, $_SESSION['user_id'], $type);
+                // SQL query in controller
+                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM reactions_log WHERE user_id=:userId AND item_id=:itemId AND type=:type");
+                $stmt->execute([
+                    'userId' => $_SESSION['user_id'],
+                    'itemId' => $itemId,
+                    'type' => $type
+                ]);
+                $hasReacted = (int)$stmt->fetchColumn() > 0;
+                
                 echo json_encode(['hasReacted' => $hasReacted]);
                 exit;
-                break;
 
-            case 'switchRole': // Handles AJAX role switching for testing
+            case 'switchRole':
                 if (!$isAjax) die('Invalid request method for role switch.');
                 
                 $newRole = $requestData['role'] ?? 'visitor';
@@ -254,7 +475,6 @@ class BlogController {
                     echo json_encode(['error' => 'Invalid role specified']);
                 }
                 exit;
-                break;
 
             default:
                 // Default action or error handling
@@ -262,56 +482,118 @@ class BlogController {
                     echo json_encode(['error' => 'Unknown action: ' . $action]);
                     exit;
                 }
-                // For non-AJAX, maybe return default data or show an error page
-                return [
-                    'posts' => $this->model->getAllPosts(),
-                    'comments' => $this->model->getAllComments()
-                ];
+                // For non-AJAX, return default data
+                return $this->handleRequest('list');
         }
     }
 
-    // Get single post by ID (used by post_details.php)
+    // Get single post by ID - returns as an array for use in views
     public function getPostById($id) {
         if (!$this->checkPermission('view')) {
             die('Permission denied to view post.');
         }
-        return $this->model->getPostById($id);
+        
+        // SQL query in controller
+        $stmt = $this->pdo->prepare("SELECT p.*, u.name AS author_name FROM posts p LEFT JOIN users u ON p.author_id = u.id WHERE p.id = :id");
+        $stmt->execute(['id' => $id]);
+        $postData = $stmt->fetch();
+        
+        if (!$postData) {
+            return null;
+        }
+        
+        // Get reaction count
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM reactions_log WHERE item_id = :postId AND type = 'post'");
+        $stmt->execute(['postId' => $id]);
+        $postData['reactions'] = (int)$stmt->fetchColumn();
+        
+        return $postData;
     }
     
-    // Get comments for a specific post (used by post_details.php)
+    // Helper method that returns raw post data (used internally)
+    private function getPostByIdRaw($id) {
+        $stmt = $this->pdo->prepare("SELECT p.*, u.name AS author_name FROM posts p LEFT JOIN users u ON p.author_id = u.id WHERE p.id = :id");
+        $stmt->execute(['id' => $id]);
+        $postData = $stmt->fetch();
+        
+        if (!$postData) {
+            return null;
+        }
+        
+        // Get reaction count
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM reactions_log WHERE item_id = :postId AND type = 'post'");
+        $stmt->execute(['postId' => $id]);
+        $postData['reactions'] = (int)$stmt->fetchColumn();
+        
+        return $postData;
+    }
+    
+    // Get comments for a specific post - returns as array for views
     public function getComments($postId) {
         if (!$this->checkPermission('view')) {
             die('Permission denied to view comments.');
         }
-        return $this->model->getCommentsByPostId($postId);
+        
+        // SQL query in controller
+        $stmt = $this->pdo->prepare("SELECT c.*, u.name AS author_name FROM comments c JOIN users u ON c.user_id = u.id WHERE c.post_id = :postId ORDER BY c.created_at ASC");
+        $stmt->execute(['postId' => $postId]);
+        $commentsData = $stmt->fetchAll();
+        
+        // Get reaction counts
+        foreach ($commentsData as &$comment) {
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM reactions_log WHERE item_id = :commentId AND type = 'comment'");
+            $stmt->execute(['commentId' => $comment['id']]);
+            $comment['reactions'] = (int)$stmt->fetchColumn();
+        }
+        
+        return $commentsData;
     }
 
-    // Get latest posts (limit parameter for controlling number of posts returned)
+    // Get latest posts - returns as array for views
     public function getLatestPosts($limit = 3) {
         if (!$this->checkPermission('view')) {
             die('Permission denied to view posts.');
         }
-        return $this->model->getLatestPosts($limit);
-    }
-
-    // Public method to add a comment (callable directly from views)
-    public function addComment($postId, $content) {
-        // Check permissions
-        if (!$this->checkPermission('comment')) {
-            throw new Exception('Permission denied: You must be logged in to comment.');
+        
+        // SQL query in controller
+        $stmt = $this->pdo->prepare("SELECT p.*, u.name AS author_name FROM posts p LEFT JOIN users u ON p.author_id = u.id ORDER BY p.created_at DESC LIMIT :limit");
+        $stmt->bindValue('limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        $postsData = $stmt->fetchAll();
+        
+        // Get reaction counts
+        foreach ($postsData as &$post) {
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM reactions_log WHERE item_id = :postId AND type = 'post'");
+            $stmt->execute(['postId' => $post['id']]);
+            $post['reactions'] = (int)$stmt->fetchColumn();
         }
         
-        // Basic validation
-        if (strlen($content) < 3) {
-            throw new Exception('Comment must be at least 3 characters long.');
-        }
-        
-        return $this->model->addComment($postId, $content);
+        return $postsData;
     }
 
-    // Helper for input sanitization (make it public so views can use it)
+    // Check if a user has reacted to a specific item
+    public function hasUserReacted($itemId, $userId, $type = 'post') {
+        if (!$this->checkPermission('view')) {
+            return false;
+        }
+        
+        if (!$userId || $userId === 0) {
+            return false;
+        }
+        
+        // SQL query in controller
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM reactions_log WHERE user_id = :userId AND item_id = :itemId AND type = :type");
+        $stmt->execute([
+            'userId' => $userId,
+            'itemId' => $itemId,
+            'type' => $type
+        ]);
+        
+        return (int)$stmt->fetchColumn() > 0;
+    }
+
+    // Helper for input sanitization (public so views can use it)
     public function sanitizeInput($data) {
         return htmlspecialchars(trim($data ?? ''));
     }
 }
-?>

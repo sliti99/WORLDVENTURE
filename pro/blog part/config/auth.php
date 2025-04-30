@@ -4,8 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Database connection for login
-require_once 'config.php';
+// Include the Database class
 require_once __DIR__ . '/../models/Database.php';
 
 // User login function
@@ -55,7 +54,7 @@ function login($email, $password) {
         // If login failed
         return ['success' => false, 'message' => 'Invalid email or password'];
     } catch (PDOException $e) {
-        error_log("Login error: " . $e->getMessage(), 0);
+        error_log("Login error: " . $e->getMessage());
         return ['success' => false, 'message' => 'Database error. Please try again later.'];
     }
 }

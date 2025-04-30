@@ -1,6 +1,5 @@
 <?php
-require_once '../controllers/controller.php';
-
+require_once '../config/config.php';
 // Force admin role in backend
 $_SESSION['role'] = 'admin';
 $_SESSION['user_id'] = 1;

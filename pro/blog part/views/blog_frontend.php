@@ -1,7 +1,7 @@
 <?php
-require_once '../controllers/controller.php';
-require_once '../config/auth.php';
+require_once '../config/config.php';
 
+// View-specific code starts here
 $controller = new BlogController();
 
 // Handle guest mode
@@ -302,18 +302,31 @@ $data = $controller->handleRequest();
         .user-avatar {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: rgba(255,255,255,0.1);
-            border-radius: 20px;
+            gap: 8px;
             cursor: pointer;
-            color: white;
-            font-weight: 500;
-            transition: all 0.3s;
+            padding: 8px 16px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.85);
+            transition: all 0.2s;
         }
         
         .user-avatar:hover {
-            background: rgba(255,255,255,0.2);
+            background: white;
+        }
+        
+        .user-avatar i {
+            font-size: 1.2rem;
+            color: var(--bleu);
+        }
+        
+        .user-avatar .fa-chevron-down {
+            font-size: 0.8rem;
+            margin-left: 4px;
+            transition: transform 0.3s;
+        }
+        
+        .user-avatar.active .fa-chevron-down {
+            transform: rotate(180deg);
         }
         
         .user-dropdown {
@@ -472,8 +485,11 @@ $data = $controller->handleRequest();
 </head>
 <body>
     <div class="background-image"></div>
-    <div class="overlay"></div>
-    
+    <!-- Global hidden inputs for photo and geolocation -->
+    <input type="file" id="photoInput" name="photo" accept="image/*" style="display:none" onchange="handlePhotoSelect()">
+    <input type="hidden" id="latitudeInput" name="latitude">
+    <input type="hidden" id="longitudeInput" name="longitude">
+
     <header>
         <img src="../../main_front/logo.png" alt="WorldVenture Logo" class="logo">
         <div>
@@ -547,13 +563,10 @@ $data = $controller->handleRequest();
             </div>
             <div class="post-actions-bar">
                 <div class="post-action-btns">
-                    <button class="btn-attach">
+                    <button type="button" class="btn-attach" onclick="openPhotoDialog()">
                         <i class="fas fa-image"></i> Photo
                     </button>
-                    <button class="btn-attach">
-                        <i class="fas fa-video"></i> Video
-                    </button>
-                    <button class="btn-attach">
+                    <button type="button" class="btn-attach" onclick="captureLocation()">
                         <i class="fas fa-map-marker-alt"></i> Location
                     </button>
                 </div>
@@ -593,15 +606,18 @@ $data = $controller->handleRequest();
         // Toggle user dropdown menu
         function toggleUserMenu() {
             const dropdown = document.getElementById('userDropdown');
+            const avatar = document.querySelector('.user-avatar');
+            // Toggle dropdown visibility and avatar active state for chevron rotation
             dropdown.classList.toggle('active');
-            
-            // Close dropdown when clicking outside
+            avatar.classList.toggle('active');
+             
+            // Close dropdown and reset avatar when clicking outside
             document.addEventListener('click', function(event) {
                 const userMenu = document.querySelector('.user-menu');
                 const clickedOutside = !userMenu.contains(event.target);
-                
-                if (clickedOutside && dropdown.classList.contains('active')) {
+                if (clickedOutside) {
                     dropdown.classList.remove('active');
+                    avatar.classList.remove('active');
                 }
             });
         }
@@ -666,170 +682,194 @@ $data = $controller->handleRequest();
         }
 
         // Enhanced post submission with better feedback
-        function submitPost() {
-            const titleInput = document.getElementById('postTitle');
-            const contentInput = document.getElementById('postContent');
-            const title = titleInput.value.trim();
-            const content = contentInput.value.trim();
-            
-            // Re-validate before submitting
-            if (!validatePost()) {
-                showToast('<i class="fas fa-exclamation-circle"></i> Please fix the errors before posting.', true);
-                return;
-            }
-            
-            // Disable button during submission with loading state
-            const postButton = document.getElementById('postButton');
-            postButton.disabled = true;
-            postButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting...';
-            
-            fetch('blog_backend.php', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({
-                    ajax: true,
-                    action: 'create',
-                    title: title,
-                    content: content
-                })
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                }
-                return res.json();
-            })
-            .then(data => {
-                if (data.error) {
-                    showToast(`<i class="fas fa-exclamation-circle"></i> ${data.error}`, true);
-                } else if (data.success) {
-                    // Add animation before clearing inputs
-                    const postCreationCard = document.querySelector('.post-creation-card');
-                    postCreationCard.style.transition = 'all 0.5s ease';
-                    postCreationCard.style.backgroundColor = 'rgba(240, 253, 244, 0.9)';
-                    postCreationCard.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.5)';
-                    
-                    setTimeout(() => {
-                        titleInput.value = ''; // Clear inputs
-                        contentInput.value = '';
-                        showToast('<i class="fas fa-check-circle"></i> Your post has been published successfully!');
-                        
-                        // Reset card style after a brief delay
-                        setTimeout(() => {
-                            postCreationCard.style.backgroundColor = '';
-                            postCreationCard.style.boxShadow = '';
-                        }, 1000);
-                        
-                        // Add new post with animation at the top
-                        loadPosts(true);
-                        validatePost(); // Reset validation state
-                    }, 500);
-                } else {
-                    showToast('<i class="fas fa-exclamation-triangle"></i> An unexpected error occurred.', true);
-                }
-            })
-            .catch(err => {
-                showToast('<i class="fas fa-bug"></i> Error submitting post. Check console for details.', true);
-                console.error('Submission error:', err);
-            })
-            .finally(() => {
-                // Re-enable button regardless of success/failure
-                postButton.disabled = false;
-                postButton.innerHTML = '<i class="fas fa-paper-plane"></i> Share Post';
-                validatePost(); // Recheck validation state
-            });
-        }
+        async function submitPost() {
+             const titleInput = document.getElementById('postTitle');
+             const contentInput = document.getElementById('postContent');
+             const title = titleInput.value.trim();
+             const content = contentInput.value.trim();
+             
+             // Re-validate before submitting
+             if (!validatePost()) {
+                 showToast('<i class="fas fa-exclamation-circle"></i> Please fix the errors before posting.', true);
+                 return;
+             }
+             
+             // Disable button during submission with loading state
+             const postButton = document.getElementById('postButton');
+             postButton.disabled = true;
+             postButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting...';
+             
+             // Prepare form data for multipart submission (incl. photo)
+             const photoInputEl = document.getElementById('photoInput');
+             if (!photoInputEl) {
+                 console.warn('Photo input element missing, proceeding without photo');
+             }
+             const formData = new FormData();
+             formData.append('ajax', true);
+             formData.append('action', 'create');
+             formData.append('title', title);
+             formData.append('content', content);
+             if (photoInputEl && photoInputEl.files.length > 0) {
+                 formData.append('photo', photoInputEl.files[0]);
+             }
+             // Include geolocation if available
+             const lat = document.getElementById('latitudeInput').value;
+             const lng = document.getElementById('longitudeInput').value;
+             if (lat && lng) {
+                 formData.append('latitude', lat);
+                 formData.append('longitude', lng);
+             }
+             // Debug: log formData entries
+             for (let [key, val] of formData.entries()) {
+                 console.log('formData', key, val instanceof File ? val.name : val);
+             }
+             
+             // Submit with timeout and async/await
+             try {
+                 const controller = new AbortController();
+                 const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+                 const response = await fetch('blog_backend.php', {
+                     method: 'POST',
+                     headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                     body: formData,
+                     signal: controller.signal
+                 });
+                 clearTimeout(timeoutId);
+                 if (!response.ok) {
+                     const text = await response.text();
+                     throw new Error(`HTTP ${response.status}: ${text}`);
+                 }
+                 const data = await response.json();
+                 if (data.error) {
+                     throw new Error(data.error);
+                 }
+                 // Success: animate and reload posts
+                 const postCreationCard = document.querySelector('.post-creation-card');
+                 postCreationCard.style.backgroundColor = 'rgba(240, 253, 244, 0.9)';
+                 postCreationCard.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.5)';
+                 setTimeout(() => {
+                    titleInput.value = '';
+                    contentInput.value = '';
+                    const latEl = document.getElementById('latitudeInput'); if (latEl) latEl.value = '';
+                    const lngEl = document.getElementById('longitudeInput'); if (lngEl) lngEl.value = '';
+                    const photoEl = document.getElementById('photoInput'); if (photoEl) photoEl.value = '';
+                     showToast('<i class="fas fa-check-circle"></i> Your post has been published successfully!');
+                     setTimeout(() => {
+                         postCreationCard.style.backgroundColor = '';
+                         postCreationCard.style.boxShadow = '';
+                     }, 800);
+                     loadPosts(true);
+                     validatePost();
+                 }, 500);
+             } catch (err) {
+                 console.error('submitPost error:', err);
+                 const msg = (err.name === 'AbortError') 
+                     ? 'Request timed out. Please try again.' 
+                     : err.message;
+                 showToast(`<i class="fas fa-exclamation-circle"></i> ${msg}`, true);
+             } finally {
+                 // Always reset button state
+                 postButton.disabled = false;
+                 postButton.innerHTML = '<i class="fas fa-paper-plane"></i> Share Post';
+                 validatePost();
+             }
+         }
 
-        // Enhanced posts loading with smooth transitions and new post animation
-        function loadPosts(addedNewPost = false) {
-            const container = document.getElementById('posts-container');
-            
-            // Keep existing posts if just added a new one
-            if (!addedNewPost) {
-                container.innerHTML = '<div class="loader"></div>'; 
-            }
-            
-            fetch('blog_backend.php?action=list', {
-                headers: { // Add this headers block
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-                .then(res => {
-                    if (!res.ok) {
-                        // Try to get more info from the response body if it's not JSON
-                        return res.text().then(text => {
-                            throw new Error(`HTTP error! status: ${res.status}, Response: ${text.substring(0, 100)}...`);
-                        });
-                    }
-                    return res.json();
-                })
-                .then(data => {
-                    if (data.error) {
-                         throw new Error(data.error);
-                    }
-                    const postsContainer = document.getElementById('posts-container');
-                    container.innerHTML = ''; // Clear loader
-                    
-                    if (!data.posts || data.posts.length === 0) {
-                        container.innerHTML = `
-                            <div class="no-posts-message">
-                                <i class="fas fa-newspaper" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                                <h2>No Posts Yet</h2>
-                                <p>Be the first to share something amazing with the community!</p>
-                            </div>`;
-                        return;
-                    }
-                    
-                    // Create HTML for each post with animation
-                    data.posts.forEach((post, index) => {
-                        const postElement = document.createElement('div');
-                        postElement.className = 'blog-post';
-                        postElement.dataset.id = post.id;
-                        postElement.style.animationDelay = `${index * 0.1}s`;
-                        postElement.style.animation = 'fadeIn 0.5s ease forwards';
-                        
-                        // Check if this is a newly added post
-                        const isNewPost = addedNewPost && index === 0;
-                        if (isNewPost) {
-                            postElement.className = 'blog-post new-post';
-                        }
-                        
-                        const authorInitial = post.author_name ? post.author_name.charAt(0).toUpperCase() : 'U';
-                        
-                        postElement.innerHTML = `
-                            <div class="post-author">
-                                <div class="post-author-avatar">
-                                    ${authorInitial}
-                                </div>
-                                <div>
-                                    <div style="font-weight: 600; color: #0f172a;">
-                                        ${post.author_name || 'User ' + post.author_id}
-                                    </div>
-                                    <div style="font-size: 0.85rem; color: #64748b;">
-                                        ${formatDate(post.created_at)}
-                                    </div>
-                                </div>
-                            </div>
-                            <h2>${escapeHtml(post.title)}</h2>
-                            <div class="blog-post-meta">
-                                <span><i class="fas fa-clock"></i> ${formatDate(post.created_at)}</span>
-                                <span><i class="fas fa-tag"></i> WorldVenture Blog</span>
-                            </div>
-                            <p>${escapeHtml(post.content.substring(0, 280))}${post.content.length > 280 ? '...' : ''}</p>
-                            <div class="post-actions">
-                                <div class="post-reactions">
-                                    <button class="reaction-btn" onclick="handleReaction(${post.id})">
-                                        <i class="fas fa-thumbs-up"></i> <span id="reaction-count-${post.id}">${post.reactions}</span>
-                                    </button>
-                                    <button class="reaction-btn" onclick="window.location.href='post_details.php?id=${post.id}#comments'">
-                                        <i class="fas fa-comment"></i> Comments
-                                    </button>
-                                </div>
-                                <a href="post_details.php?id=${post.id}" class="read-more">Read More</a>
-                            </div>
+         // Enhanced posts loading with smooth transitions and new post animation
+         function loadPosts(addedNewPost = false) {
+             const container = document.getElementById('posts-container');
+             
+             // Keep existing posts if just added a new one
+             if (!addedNewPost) {
+                 container.innerHTML = '<div class="loader"></div>'; 
+             }
+             
+             fetch('blog_backend.php?action=list', {
+                 headers: { // Add this headers block
+                     'X-Requested-With': 'XMLHttpRequest'
+                 }
+             })
+                 .then(res => {
+                     if (!res.ok) {
+                         // Try to get more info from the response body if it's not JSON
+                         return res.text().then(text => {
+                             throw new Error(`HTTP error! status: ${res.status}, Response: ${text.substring(0, 100)}...`);
+                         });
+                     }
+                     return res.json();
+                 })
+                 .then(data => {
+                     if (data.error) {
+                          throw new Error(data.error);
+                     }
+                     const postsContainer = document.getElementById('posts-container');
+                     container.innerHTML = ''; // Clear loader
+                     
+                     if (!data.posts || data.posts.length === 0) {
+                         container.innerHTML = `
+                             <div class="no-posts-message">
+                                 <i class="fas fa-newspaper" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                 <h2>No Posts Yet</h2>
+                                 <p>Be the first to share something amazing with the community!</p>
+                             </div>`;
+                         return;
+                     }
+                     
+                     // Create HTML for each post with animation
+                     data.posts.forEach((post, index) => {
+                         const postElement = document.createElement('div');
+                         postElement.className = 'blog-post';
+                         postElement.dataset.id = post.id;
+                         postElement.style.animationDelay = `${index * 0.1}s`;
+                         postElement.style.animation = 'fadeIn 0.5s ease forwards';
+                         
+                         // Check if this is a newly added post
+                         const isNewPost = addedNewPost && index === 0;
+                         if (isNewPost) {
+                             postElement.className = 'blog-post new-post';
+                         }
+                         
+                         const authorInitial = post.author_name ? post.author_name.charAt(0).toUpperCase() : 'U';
+                         
+                         postElement.innerHTML = `
+     <div class="post-author">
+         <div class="post-author-avatar">
+             ${authorInitial}
+         </div>
+         <div>
+             <div style="font-weight: 600; color: #0f172a;">
+                 ${post.author_name || 'User ' + post.author_id}
+             </div>
+             <div style="font-size: 0.85rem; color: #64748b;">
+                 ${formatDate(post.created_at)}
+             </div>
+         </div>
+     </div>
+     <h2>${escapeHtml(post.title)}</h2>
+     <div class="blog-post-meta">
+         <span><i class="fas fa-clock"></i> ${formatDate(post.created_at)}</span>
+         <span><i class="fas fa-tag"></i> WorldVenture Blog</span>
+     </div>
+     <p>${escapeHtml(post.content.substring(0, 280))}${post.content.length > 280 ? '...' : ''}</p>
+     ${post.photo_path ? `<img src="${post.photo_path}" alt="Post Image" style="max-width:100%;border-radius:8px;margin:1rem 0;">` : ''}
+     ${post.location_lat && post.location_lng ? (() => {
+         const lat = parseFloat(post.location_lat);
+         const lng = parseFloat(post.location_lng);
+         return (!isNaN(lat) && !isNaN(lng))
+             ? `<div style="font-size:0.85rem;color:#64748b;margin-bottom:1rem;"><i class="fas fa-map-marker-alt"></i> ${lat.toFixed(4)}, ${lng.toFixed(4)}</div>`
+             : '';
+     })() : ''}
+     <div class="post-actions">
+         <div class="post-reactions">
+             <button class="reaction-btn" onclick="handleReaction(${post.id})">
+                 <i class="fas fa-thumbs-up"></i> <span id="reaction-count-${post.id}">${post.reactions}</span>
+             </button>
+             <button class="reaction-btn" onclick="window.location.href='post_details.php?id=${post.id}#comments'">
+                 <i class="fas fa-comment"></i> Comments
+             </button>
+         </div>
+         <a href="post_details.php?id=${post.id}" class="read-more">Read More</a>
+     </div>
                             ${isAdmin() ? `
                             <div class="admin-actions" style="margin-top: 1rem; text-align: right;">
                                 <button onclick="deletePost(${post.id})" class="reaction-btn" style="background-color: #fee2e2; color: #ef4444;">
@@ -837,615 +877,656 @@ $data = $controller->handleRequest();
                                 </button>
                             </div>` : ''}
                         `;
-                        
-                        container.appendChild(postElement);
-                        
-                        // Add highlight animation for new posts
-                        if (isNewPost) {
-                            setTimeout(() => {
-                                postElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                postElement.style.animation = 'highlight 2s ease';
-                            }, 300);
-                        }
-                    });
-                })
-                .catch(err => {
-                    container.innerHTML = `
-                        <div class="no-posts-message">
-                            <h2><i class="fas fa-exclamation-triangle"></i> Error loading posts</h2>
-                            <p>Could not fetch posts. Please try again later.</p>
-                            <p style="font-size: 0.8em; color: #aaa;">${escapeHtml(err.message)}</p>
-                        </div>
-                    `;
-                    console.error('Error loading posts:', err);
-                });
-        }
+                         
+                         container.appendChild(postElement);
+                         
+                         // Add highlight animation for new posts
+                         if (isNewPost) {
+                             setTimeout(() => {
+                                 postElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                 postElement.style.animation = 'highlight 2s ease';
+                             }, 300);
+                         }
+                     });
+                 })
+                 .catch(err => {
+                     container.innerHTML = `
+                         <div class="no-posts-message">
+                             <h2><i class="fas fa-exclamation-triangle"></i> Error loading posts</h2>
+                             <p>Could not fetch posts. Please try again later.</p>
+                             <p style="font-size: 0.8em; color: #aaa;">${escapeHtml(err.message)}</p>
+                         </div>
+                     `;
+                     console.error('Error loading posts:', err);
+                 });
+         }
 
-        // Enhanced reaction handling with better UX
-        function handleReaction(postId) {
-            if (isVisitor()) {
-                showToast('<i class="fas fa-lock"></i> Please login to react to posts', true);
-                return;
-            }
-            
-            // Find and update UI before server response (optimistic UI update)
-            const reactionBtn = document.querySelector(`.blog-post[data-id="${postId}"] .reaction-btn`);
-            const countElement = document.getElementById(`reaction-count-${postId}`);
-            
-            if (reactionBtn) {
-                reactionBtn.classList.add('active');
-                reactionBtn.disabled = true; // Prevent multiple clicks
-                
-                // Add a temporary animation
-                reactionBtn.style.transition = 'all 0.3s ease';
-                reactionBtn.style.transform = 'scale(1.1)';
-                setTimeout(() => {
-                    reactionBtn.style.transform = 'scale(1)';
-                }, 300);
-            }
-            
-            fetch('blog_backend.php', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({
-                    ajax: true,
-                    action: 'react',
-                    postId: postId
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    showToast(`<i class="fas fa-exclamation-circle"></i> ${data.error}`, true);
-                    return;
-                }
-                if (data.success) {
-                    if (countElement) {
-                        // Animate the count change
-                        countElement.style.transition = 'all 0.3s ease';
-                        countElement.style.transform = 'scale(1.5)';
-                        countElement.style.color = '#3e92cc';
-                        
-                        setTimeout(() => {
-                            countElement.textContent = data.count;
-                            setTimeout(() => {
-                                countElement.style.transform = 'scale(1)';
-                                countElement.style.color = '';
-                            }, 300);
-                        }, 100);
-                    }
-                    
-                    showToast('<i class="fas fa-check-circle"></i> Your reaction has been recorded!');
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                showToast('<i class="fas fa-times-circle"></i> Error updating reaction', true);
-            })
-            .finally(() => {
-                if (reactionBtn) {
-                    reactionBtn.disabled = false;
-                }
-            });
-        }
+         // Enhanced reaction handling with better UX
+         function handleReaction(postId) {
+             if (isVisitor()) {
+                 showToast('<i class="fas fa-lock"></i> Please login to react to posts', true);
+                 return;
+             }
+             
+             // Find and update UI before server response (optimistic UI update)
+             const reactionBtn = document.querySelector(`.blog-post[data-id="${postId}"] .reaction-btn`);
+             const countElement = document.getElementById(`reaction-count-${postId}`);
+             
+             if (reactionBtn) {
+                 reactionBtn.classList.add('active');
+                 reactionBtn.disabled = true; // Prevent multiple clicks
+                 
+                 // Add a temporary animation
+                 reactionBtn.style.transition = 'all 0.3s ease';
+                 reactionBtn.style.transform = 'scale(1.1)';
+                 setTimeout(() => {
+                     reactionBtn.style.transform = 'scale(1)';
+                 }, 300);
+             }
+             
+             fetch('blog_backend.php', {
+                 method: 'POST',
+                 headers: { 
+                     'Content-Type': 'application/json',
+                     'X-Requested-With': 'XMLHttpRequest'
+                 },
+                 body: JSON.stringify({
+                     ajax: true,
+                     action: 'react',
+                     postId: postId
+                 })
+             })
+             .then(res => res.json())
+             .then(data => {
+                 if (data.error) {
+                     showToast(`<i class="fas fa-exclamation-circle"></i> ${data.error}`, true);
+                     return;
+                 }
+                 if (data.success) {
+                     if (countElement) {
+                         // Animate the count change
+                         countElement.style.transition = 'all 0.3s ease';
+                         countElement.style.transform = 'scale(1.5)';
+                         countElement.style.color = '#3e92cc';
+                         
+                         setTimeout(() => {
+                             countElement.textContent = data.count;
+                             setTimeout(() => {
+                                 countElement.style.transform = 'scale(1)';
+                                 countElement.style.color = '';
+                             }, 300);
+                         }, 100);
+                     }
+                     
+                     showToast('<i class="fas fa-check-circle"></i> Your reaction has been recorded!');
+                 }
+             })
+             .catch(err => {
+                 console.error(err);
+                 showToast('<i class="fas fa-times-circle"></i> Error updating reaction', true);
+             })
+             .finally(() => {
+                 if (reactionBtn) {
+                     reactionBtn.disabled = false;
+                 }
+             });
+         }
 
-        // Enhanced delete post functionality
-        function deletePost(postId) {
-            if (!isAdmin()) {
-                showToast('<i class="fas fa-shield-alt"></i> Only admins can delete posts', true);
-                return;
-            }
-            
-            if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
-                return;
-            }
-            
-            const postElement = document.querySelector(`.blog-post[data-id="${postId}"]`);
-            if (postElement) {
-                // Add visual feedback before deletion
-                postElement.style.transition = 'all 0.5s ease';
-                postElement.style.opacity = '0.5';
-                postElement.style.transform = 'scale(0.95)';
-            }
-            
-            fetch('blog_backend.php', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({
-                    ajax: true,
-                    action: 'delete',
-                    id: postId
-                })
-            })
-            .then(res => {
-                 if (!res.ok) { throw new Error(`HTTP error! status: ${res.status}`); }
-                 return res.json();
-            })
-            .then(data => {
-                if (data.error) {
-                    showToast(`<i class="fas fa-exclamation-circle"></i> ${data.error}`, true);
-                    // Restore the post element if there was an error
-                    if (postElement) {
-                        postElement.style.opacity = '1';
-                        postElement.style.transform = 'scale(1)';
-                    }
-                } else if (data.success) {
-                    showToast('<i class="fas fa-check-circle"></i> Post deleted successfully');
-                    
-                    // Remove post from DOM with animation
-                    if (postElement) {
-                        postElement.style.height = postElement.offsetHeight + 'px';
-                        postElement.style.marginTop = '0';
-                        postElement.style.marginBottom = '0';
-                        
-                        setTimeout(() => {
-                            postElement.style.height = '0';
-                            postElement.style.padding = '0';
-                            postElement.style.margin = '0';
-                            postElement.style.overflow = 'hidden';
-                            
-                            setTimeout(() => {
-                                postElement.remove();
-                                // Check if container is empty after removal
-                                if (!document.querySelector('#posts-container .blog-post')) {
-                                    loadPosts(); // Reload to show "No posts" message if needed
-                                }
-                            }, 500);
-                        }, 100);
-                    } else {
-                         loadPosts(); // Fallback if element not found
-                    }
-                }
-            })
-            .catch(err => {
-                console.error('Delete error:', err);
-                showToast('<i class="fas fa-times-circle"></i> Error deleting post', true);
-                // Restore the post element if there was an error
-                if (postElement) {
-                    postElement.style.opacity = '1';
-                    postElement.style.transform = 'scale(1)';
-                }
-            });
-        }
+         // Enhanced delete post functionality
+         function deletePost(postId) {
+             if (!isAdmin()) {
+                 showToast('<i class="fas fa-shield-alt"></i> Only admins can delete posts', true);
+                 return;
+             }
+             
+             if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
+                 return;
+             }
+             
+             const postElement = document.querySelector(`.blog-post[data-id="${postId}"]`);
+             if (postElement) {
+                 // Add visual feedback before deletion
+                 postElement.style.transition = 'all 0.5s ease';
+                 postElement.style.opacity = '0.5';
+                 postElement.style.transform = 'scale(0.95)';
+             }
+             
+             fetch('blog_backend.php', {
+                 method: 'POST',
+                 headers: { 
+                     'Content-Type': 'application/json',
+                     'X-Requested-With': 'XMLHttpRequest'
+                 },
+                 body: JSON.stringify({
+                     ajax: true,
+                     action: 'delete',
+                     id: postId
+                 })
+             })
+             .then(res => {
+                  if (!res.ok) { throw new Error(`HTTP error! status: ${res.status}`); }
+                  return res.json();
+             })
+             .then(data => {
+                 if (data.error) {
+                     showToast(`<i class="fas fa-exclamation-circle"></i> ${data.error}`, true);
+                     // Restore the post element if there was an error
+                     if (postElement) {
+                         postElement.style.opacity = '1';
+                         postElement.style.transform = 'scale(1)';
+                     }
+                 } else if (data.success) {
+                     showToast('<i class="fas fa-check-circle"></i> Post deleted successfully');
+                     
+                     // Remove post from DOM with animation
+                     if (postElement) {
+                         postElement.style.height = postElement.offsetHeight + 'px';
+                         postElement.style.marginTop = '0';
+                         postElement.style.marginBottom = '0';
+                         
+                         setTimeout(() => {
+                             postElement.style.height = '0';
+                             postElement.style.padding = '0';
+                             postElement.style.margin = '0';
+                             postElement.style.overflow = 'hidden';
+                             
+                             setTimeout(() => {
+                                 postElement.remove();
+                                 // Check if container is empty after removal
+                                 if (!document.querySelector('#posts-container .blog-post')) {
+                                     loadPosts(); // Reload to show "No posts" message if needed
+                                 }
+                             }, 500);
+                         }, 100);
+                     } else {
+                          loadPosts(); // Fallback if element not found
+                     }
+                 }
+             })
+             .catch(err => {
+                 console.error('Delete error:', err);
+                 showToast('<i class="fas fa-times-circle"></i> Error deleting post', true);
+                 // Restore the post element if there was an error
+                 if (postElement) {
+                     postElement.style.opacity = '1';
+                     postElement.style.transform = 'scale(1)';
+                 }
+             });
+         }
 
-        // Helper functions
-        function isVisitor() {
-            return <?= json_encode(getUserRole() === 'visitor') ?>;
-        }
-        
-        function isAdmin() {
-            return <?= json_encode(getUserRole() === 'admin') ?>;
-        }
-        
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Enhanced toast notification
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toast');
-            toast.innerHTML = message;
-            toast.className = isError ? 'toast error show' : 'toast show';
-            
-            setTimeout(() => {
-                toast.className = 'toast';
-            }, 3000);
-        }
+         // Helper functions
+         function isVisitor() {
+             return <?= json_encode(getUserRole() === 'visitor') ?>;
+         }
+         
+         function isAdmin() {
+             return <?= json_encode(getUserRole() === 'admin') ?>;
+         }
+         
+         function formatDate(dateString) {
+             const date = new Date(dateString);
+             return date.toLocaleDateString('en-US', {
+                 year: 'numeric',
+                 month: 'short',
+                 day: 'numeric',
+                 hour: '2-digit',
+                 minute: '2-digit'
+             });
+         }
+         
+         function escapeHtml(text) {
+             const div = document.createElement('div');
+             div.textContent = text;
+             return div.innerHTML;
+         }
+         
+         // Enhanced toast notification
+         function showToast(message, isError = false) {
+             const toast = document.getElementById('toast');
+             toast.innerHTML = message;
+             toast.className = isError ? 'toast error show' : 'toast show';
+             
+             setTimeout(() => {
+                 toast.className = 'toast';
+             }, 3000);
+         }
 
-        // Implementing the socket.io + Gemini filtering requirements for discussions
-        const socketIoScript = document.createElement('script');
-        socketIoScript.src = 'https://cdn.socket.io/4.6.0/socket.io.min.js';
-        socketIoScript.integrity = 'sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+';
-        socketIoScript.crossOrigin = 'anonymous';
-        document.head.appendChild(socketIoScript);
+         // Implementing the socket.io + Gemini filtering requirements for discussions
+         const socketIoScript = document.createElement('script');
+         // Load Socket.IO client script directly from our chat server to match origin
+         socketIoScript.src = 'http://localhost:3000/socket.io/socket.io.js';
+         document.head.appendChild(socketIoScript);
 
-        // Add chat container to the blog UI
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add the chat container to the page
-            const chatContainer = document.createElement('div');
-            chatContainer.className = 'chat-container';
-            chatContainer.innerHTML = `
-                <div class="chat-header">
-                    <h3><i class="fas fa-comments"></i> WorldVenture Community Chat</h3>
-                    <div class="chat-controls">
-                        <button id="toggleChatBtn" class="btn-chat-toggle"><i class="fas fa-chevron-down"></i></button>
-                    </div>
-                </div>
-                <div class="chat-messages" id="chatMessages">
-                    <div class="welcome-message">
-                        <i class="fas fa-globe-americas"></i>
-                        <p>Welcome to the WorldVenture community chat! Share your travel experiences and connect with other travelers.</p>
-                    </div>
-                </div>
-                <div class="chat-input-area">
-                    <textarea 
-                        id="chatInput" 
-                        placeholder="Type your message here..." 
-                        rows="2"
-                        ${isVisitor() ? 'disabled' : ''}
-                    ></textarea>
-                    <button 
-                        id="sendMessageBtn" 
-                        class="btn-send-message"
-                        ${isVisitor() ? 'disabled' : ''}
-                    >
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-                ${isVisitor() ? '<div class="visitor-message-chat">Please <a href="login.php">login</a> to participate in the chat</div>' : ''}
-            `;
-            document.body.appendChild(chatContainer);
+         // Add chat container to the blog UI
+         document.addEventListener('DOMContentLoaded', function() {
+             // Add the chat container to the page
+             const chatContainer = document.createElement('div');
+             chatContainer.className = 'chat-container';
+             chatContainer.innerHTML = `
+                 <div class="chat-header">
+                     <h3><i class="fas fa-comments"></i> WorldVenture Community Chat</h3>
+                     <div class="chat-controls">
+                         <button id="toggleChatBtn" class="btn-chat-toggle"><i class="fas fa-chevron-down"></i></button>
+                     </div>
+                 </div>
+                 <div class="chat-messages" id="chatMessages">
+                     <div class="welcome-message">
+                         <i class="fas fa-globe-americas"></i>
+                         <p>Welcome to the WorldVenture community chat! Share your travel experiences and connect with other travelers.</p>
+                     </div>
+                 </div>
+                 <div class="chat-input-area">
+                     <textarea 
+                         id="chatInput" 
+                         placeholder="Type your message here..." 
+                         rows="2"
+                         ${isVisitor() ? 'disabled' : ''}
+                     ></textarea>
+                     <button 
+                         id="sendMessageBtn" 
+                         class="btn-send-message"
+                         ${isVisitor() ? 'disabled' : ''}
+                     >
+                         <i class="fas fa-paper-plane"></i>
+                     </button>
+                 </div>
+                 ${isVisitor() ? '<div class="visitor-message-chat">Please <a href="login.php">login</a> to participate in the chat</div>' : ''}
+             `;
+             document.body.appendChild(chatContainer);
 
-            // Socket.io implementation
-            socketIoScript.onload = function() {
-                initializeChat();
-            };
+             // Socket.IO implementation
+             socketIoScript.onload = function() {
+                 initializeChat();
+             };
 
-            // Initialize chat functionality
-            function initializeChat() {
-                // Connect to the chat server
-                const socket = io('http://localhost:3000', {
-                    withCredentials: true,
-                    extraHeaders: {
-                        "Access-Control-Allow-Origin": "*"
-                    }
-                });
+             // Initialize chat functionality once Socket.IO script is loaded
+             function initializeChat() {
+                 // Connect directly to chat server via WebSocket to avoid CORS preflight
+                 const socket = io('http://localhost:3000', {
+                     transports: ['websocket'],
+                     withCredentials: true
+                 });
 
-                const chatMessages = document.getElementById('chatMessages');
-                const chatInput = document.getElementById('chatInput');
-                const sendMessageBtn = document.getElementById('sendMessageBtn');
-                const toggleChatBtn = document.getElementById('toggleChatBtn');
+                 const chatMessages = document.getElementById('chatMessages');
+                 const chatInput = document.getElementById('chatInput');
+                 const sendMessageBtn = document.getElementById('sendMessageBtn');
+                 const toggleChatBtn = document.getElementById('toggleChatBtn');
 
-                // Toggle chat visibility
-                toggleChatBtn.addEventListener('click', function() {
-                    const chatMessagesEl = document.query
-                    if (chatMessagesEl.style.display === 'none') {
-                        chatMessagesEl.style.display = 'flex';
-                        chatInputArea.style.display = 'flex';
-                        icon.className = 'fas fa-chevron-down';
-                    } else {
-                        chatMessagesEl.style.display = 'none';
-                        chatInputArea.style.display = 'none';
-                        icon.className = 'fas fa-chevron-up';
-                    }
-                });
+                 // Toggle chat collapse via CSS class
+                 toggleChatBtn.addEventListener('click', function() {
+                     const chatContainer = document.querySelector('.chat-container');
+                     chatContainer.classList.toggle('collapsed');
+                     // Fix for Font Awesome icon toggling
+                     const icon = this.querySelector('i');
+                     if (chatContainer.classList.contains('collapsed')) {
+                         icon.className = 'fas fa-chevron-up';
+                     } else {
+                         icon.className = 'fas fa-chevron-down';
+                     }
+                 });
 
-                // Send message when button is clicked
-                sendMessageBtn.addEventListener('click', sendMessage);
+                 // Send message when button is clicked
+                 sendMessageBtn.addEventListener('click', sendMessage);
 
-                // Send message when Enter key is pressed (but Shift+Enter for new line)
-                chatInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        sendMessage();
-                    }
-                });
+                 // Send message when Enter key is pressed (but Shift+Enter for new line)
+                 chatInput.addEventListener('keydown', function(e) {
+                     if (e.key === 'Enter' && !e.shiftKey) {
+                         e.preventDefault();
+                         sendMessage();
+                     }
+                 });
 
-                function sendMessage() {
-                    const message = chatInput.value.trim();
-                    if (!message) return;
-                    
-                    // Don't allow visitors to send messages
-                    if (isVisitor()) {
-                        showToast('<i class="fas fa-lock"></i> Please login to participate in the chat', true);
-                        return;
-                    }
+                 function sendMessage() {
+                     const message = chatInput.value.trim();
+                     if (!message) return;
+                     
+                     // Don't allow visitors to send messages
+                     if (isVisitor()) {
+                         showToast('<i class="fas fa-lock"></i> Please login to participate in the chat', true);
+                         return;
+                     }
 
-                    // Send message to server
-                    socket.emit('send_message', {
-                        message,
-                        user: {
-                            id: <?= $_SESSION['user_id'] ?? 0 ?>,
-                            name: '<?= htmlspecialchars($_SESSION['name'] ?? 'Guest') ?>',
-                            role: '<?= getUserRole() ?>'
-                        },
-                        timestamp: new Date().toISOString()
-                    });
+                     // Send message to server
+                     socket.emit('send_message', {
+                         message,
+                         user: {
+                             id: <?= $_SESSION['user_id'] ?? 0 ?>,
+                             name: '<?= htmlspecialchars($_SESSION['name'] ?? 'Guest') ?>',
+                             role: '<?= getUserRole() ?>'
+                         },
+                         timestamp: new Date().toISOString()
+                     });
 
-                    // Clear input
-                    chatInput.value = '';
-                }
+                     // Clear input
+                     chatInput.value = '';
+                 }
 
-                // Handle incoming messages
-                socket.on('new_message', function(data) {
-                    appendMessage(data);
-                    // Auto-scroll to the latest message
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                });
+                 // Handle incoming messages
+                 socket.on('new_message', function(data) {
+                     appendMessage(data);
+                     // Auto-scroll to the latest message
+                     chatMessages.scrollTop = chatMessages.scrollHeight;
+                 });
 
-                // Handle error messages (for blocked content)
-                socket.on('message_blocked', function() {
-                    showToast('<i class="fas fa-exclamation-triangle"></i> Your message was blocked due to inappropriate content', true);
-                });
+                 // Handle error messages (for blocked content)
+                 socket.on('message_blocked', function() {
+                     showToast('<i class="fas fa-exclamation-triangle"></i> Your message was blocked due to inappropriate content', true);
+                 });
 
-                // Handle reconnection
-                socket.on('reconnect', function() {
-                    appendSystemMessage('Reconnected to chat server');
-                });
+                 // Handle reconnection
+                 socket.on('reconnect', function() {
+                     appendSystemMessage('Reconnected to chat server');
+                 });
 
-                // Handle disconnect
-                socket.on('disconnect', function() {
-                    appendSystemMessage('Disconnected from chat server. Attempting to reconnect...');
-                });
+                 // Handle disconnect
+                 socket.on('disconnect', function() {
+                     appendSystemMessage('Disconnected from chat server. Attempting to reconnect...');
+                 });
 
-                // Append a chat message to the conversation
-                function appendMessage(data) {
-                    const messageElement = document.createElement('div');
-                    messageElement.className = 'chat-message';
-                    
-                    // Highlight if it's the current user's message
-                    if (data.user.id === <?= $_SESSION['user_id'] ?? 0 ?>) {
-                        messageElement.classList.add('own-message');
-                    }
-                    
-                    // Add admin styling if applicable
-                    if (data.user.role === 'admin') {
-                        messageElement.classList.add('admin-message');
-                    }
-                    
-                    const time = new Date(data.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                    
-                    messageElement.innerHTML = `
-                        <div class="message-header">
-                            <span class="message-author">${escapeHtml(data.user.name)}</span>
-                            ${data.user.role === 'admin' ? '<span class="message-badge admin">Admin</span>' : ''}
-                            <span class="message-time">${time}</span>
-                        </div>
-                        <div class="message-content">${escapeHtml(data.message)}</div>
-                    `;
-                    
-                    chatMessages.appendChild(messageElement);
-                }
-                
-                // Append system messages
-                function appendSystemMessage(text) {
-                    const messageElement = document.createElement('div');
-                    messageElement.className = 'chat-message system-message';
-                    messageElement.innerHTML = `
-                        <div class="message-content">
-                            <i class="fas fa-info-circle"></i> ${text}
-                        </div>
-                    `;
-                    chatMessages.appendChild(messageElement);
-                }
-            }
-        });
+                 // Append a chat message to the conversation
+                 function appendMessage(data) {
+                     const messageElement = document.createElement('div');
+                     messageElement.className = 'chat-message';
+                     
+                     // Highlight if it's the current user's message
+                     if (data.user.id === <?= $_SESSION['user_id'] ?? 0 ?>) {
+                         messageElement.classList.add('own-message');
+                     }
+                     
+                     // Add admin styling if applicable
+                     if (data.user.role === 'admin') {
+                         messageElement.classList.add('admin-message');
+                     }
+                     
+                     const time = new Date(data.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                     
+                     messageElement.innerHTML = `
+                         <div class="message-header">
+                             <span class="message-author">${escapeHtml(data.user.name)}</span>
+                             ${data.user.role === 'admin' ? '<span class="message-badge admin">Admin</span>' : ''}
+                             <span class="message-time">${time}</span>
+                         </div>
+                         <div class="message-content">${escapeHtml(data.message)}</div>
+                     `;
+                     
+                     chatMessages.appendChild(messageElement);
+                 }
+                 
+                 // Append system messages
+                 function appendSystemMessage(text) {
+                     const messageElement = document.createElement('div');
+                     messageElement.className = 'chat-message system-message';
+                     messageElement.innerHTML = `
+                         <div class="message-content">
+                             <i class="fas fa-info-circle"></i> ${text}
+                         </div>
+                     `;
+                     chatMessages.appendChild(messageElement);
+                 }
+             }
+         });
 
-        // Add chat styles
-        const chatStyles = document.createElement('style');
-        chatStyles.textContent = `
-            .chat-container {
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                width: 320px;
-                background: white;
-                border-radius: 10px;
-                box-shadow: 0 5px 25px rgba(0,0,0,0.2);
-                display: flex;
-                flex-direction: column;
-                z-index: 1000;
-                overflow: hidden;
-                max-height: 500px;
-            }
-            
-            .chat-header {
-                background: linear-gradient(135deg, #3e92cc, #0a4c8c);
-                color: white;
-                padding: 12px 15px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                cursor: pointer;
-            }
-            
-            .chat-header h3 {
-                margin: 0;
-                font-size: 1rem;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-            
-            .btn-chat-toggle {
-                background: none;
-                border: none;
-                color: white;
-                cursor: pointer;
-                transition: transform 0.3s;
-            }
-            
-            .btn-chat-toggle:hover {
-                transform: translateY(2px);
-            }
-            
-            .chat-messages {
-                padding: 15px;
-                height: 300px;
-                overflow-y: auto;
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-                background: #f8fafc;
-            }
-            
-            .welcome-message {
-                background: #e0f2fe;
-                padding: 12px;
-                border-radius: 8px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                font-size: 0.9rem;
-                color: #0c4a6e;
-                margin-bottom: 10px;
-            }
-            
-            .welcome-message i {
-                font-size: 1.5rem;
-                color: #0284c7;
-            }
-            
-            .chat-message {
-                padding: 10px 12px;
-                border-radius: 8px;
-                max-width: 85%;
-                background: #e2e8f0;
-                align-self: flex-start;
-                font-size: 0.9rem;
-                animation: fadeIn 0.3s ease-out;
-            }
-            
-            .chat-message.own-message {
-                background: #dbeafe;
-                align-self: flex-end;
-            }
-            
-            .chat-message.admin-message {
-                background: #bae6fd;
-            }
-            
-            .chat-message.system-message {
-                background: #fef3c7;
-                align-self: center;
-                color: #92400e;
-                font-size: 0.8rem;
-                padding: 6px 10px;
-            }
-            
-            .message-header {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                margin-bottom: 5px;
-                flex-wrap: wrap;
-            }
-            
-            .message-author {
-                font-weight: 600;
-                color: #334155;
-            }
-            
-            .message-badge {
-                font-size: 0.7rem;
-                padding: 2px 6px;
-                border-radius: 10px;
-                color: white;
-                font-weight: 500;
-            }
-            
-            .message-badge.admin {
-                background: #0ea5e9;
-            }
-            
-            .message-time {
-                font-size: 0.75rem;
-                color: #64748b;
-                margin-left: auto;
-            }
-            
-            .message-content {
-                line-height: 1.4;
-                color: #334155;
-                overflow-wrap: break-word;
-                word-break: break-word;
-            }
-            
-            .chat-input-area {
-                padding: 10px;
-                border-top: 1px solid #e2e8f0;
-                display: flex;
-                gap: 8px;
-                background: white;
-            }
-            
-            #chatInput {
-                flex-grow: 1;
-                padding: 8px 12px;
-                border: 1px solid #e2e8f0;
-                border-radius: 20px;
-                resize: none;
-                outline: none;
-                font-family: inherit;
-                font-size: 0.9rem;
-                transition: border-color 0.3s;
-            }
-            
-            #chatInput:focus {
-                border-color: #3e92cc;
-            }
-            
-            #chatInput:disabled {
-                background: #f1f5f9;
-                cursor: not-allowed;
-            }
-            
-            .btn-send-message {
-                width: 36px;
-                height: 36px;
-                background: linear-gradient(135deg, #3e92cc, #0a4c8c);
-                color: white;
-                border: none;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                transition: all 0.3s;
-            }
-            
-            .btn-send-message:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 2px 8px rgba(10, 76, 140, 0.3);
-            }
-            
-            .btn-send-message:disabled {
-                background: #cbd5e1;
-                cursor: not-allowed;
-                transform: none;
-                box-shadow: none;
-            }
-            
-            .visitor-message-chat {
-                background: #f1f5f9;
-                color: #64748b;
-                padding: 8px;
-                text-align: center;
-                font-size: 0.85rem;
-                border-top: 1px solid #e2e8f0;
-            }
-            
-            .visitor-message-chat a {
-                color: #3e92cc;
-                text-decoration: none;
-                font-weight: 600;
-            }
-            
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(10px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-        `;
-        document.head.appendChild(chatStyles);
+         // Add chat styles
+         const chatStyles = document.createElement('style');
+         chatStyles.textContent = `
+             .chat-container {
+                 position: fixed;
+                 bottom: 20px;
+                 left: 20px; /* Changed from right to left */
+                 width: 320px;
+                 background: white;
+                 border-radius: 10px;
+                 box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+                 display: flex;
+                 flex-direction: column;
+                 z-index: 1000;
+                 overflow: hidden;
+                 max-height: 500px;
+             }
+             
+             .chat-container.collapsed .chat-messages,
+             .chat-container.collapsed .chat-input-area,
+             .chat-container.collapsed .visitor-message-chat {
+                 display: none;
+             }
+             
+             .chat-header {
+                 background: linear-gradient(135deg, #3e92cc, #0a4c8c);
+                 color: white;
+                 padding: 12px 15px;
+                 display: flex;
+                 justify-content: space-between;
+                 align-items: center;
+                 cursor: pointer;
+             }
+             
+             .chat-header h3 {
+                 margin: 0;
+                 font-size: 1rem;
+                 display: flex;
+                 align-items: center;
+                 gap: 8px;
+             }
+             
+             .btn-chat-toggle {
+                 background: none;
+                 border: none;
+                 color: white;
+                 cursor: pointer;
+                 transition: transform 0.3s;
+             }
+             
+             .btn-chat-toggle:hover {
+                 transform: translateY(2px);
+             }
+             
+             .chat-messages {
+                 padding: 15px;
+                 height: 300px;
+                 overflow-y: auto;
+                 display: flex;
+                 flex-direction: column;
+                 gap: 10px;
+                 background: #f8fafc;
+             }
+             
+             .welcome-message {
+                 background: #e0f2fe;
+                 padding: 12px;
+                 border-radius: 8px;
+                 display: flex;
+                 align-items: center;
+                 gap: 10px;
+                 font-size: 0.9rem;
+                 color: #0c4a6e;
+                 margin-bottom: 10px;
+             }
+             
+             .welcome-message i {
+                 font-size: 1.5rem;
+                 color: #0284c7;
+             }
+             
+             .chat-message {
+                 padding: 10px 12px;
+                 border-radius: 8px;
+                 max-width: 85%;
+                 background: #e2e8f0;
+                 align-self: flex-start;
+                 font-size: 0.9rem;
+                 animation: fadeIn 0.3s ease-out;
+             }
+             
+             .chat-message.own-message {
+                 background: #dbeafe;
+                 align-self: flex-end;
+             }
+             
+             .chat-message.admin-message {
+                 background: #bae6fd;
+             }
+             
+             .chat-message.system-message {
+                 background: #fef3c7;
+                 align-self: center;
+                 color: #92400e;
+                 font-size: 0.8rem;
+                 padding: 6px 10px;
+             }
+             
+             .message-header {
+                 display: flex;
+                 align-items: center;
+                 gap: 6px;
+                 margin-bottom: 5px;
+                 flex-wrap: wrap;
+             }
+             
+             .message-author {
+                 font-weight: 600;
+                 color: #334155;
+             }
+             
+             .message-badge {
+                 font-size: 0.7rem;
+                 padding: 2px 6px;
+                 border-radius: 10px;
+                 color: white;
+                 font-weight: 500;
+             }
+             
+             .message-badge.admin {
+                 background: #0ea5e9;
+             }
+             
+             .message-time {
+                 font-size: 0.75rem;
+                 color: #64748b;
+                 margin-left: auto;
+             }
+             
+             .message-content {
+                 line-height: 1.4;
+                 color: #334155;
+                 overflow-wrap: break-word;
+                 word-break: break-word;
+             }
+             
+             .chat-input-area {
+                 padding: 10px;
+                 border-top: 1px solid #e2e8f0;
+                 display: flex;
+                 gap: 8px;
+                 background: white;
+             }
+             
+             #chatInput {
+                 flex-grow: 1;
+                 padding: 8px 12px;
+                 border: 1px solid #e2e8f0;
+                 border-radius: 20px;
+                 resize: none;
+                 outline: none;
+                 font-family: inherit;
+                 font-size: 0.9rem;
+                 transition: border-color 0.3s;
+             }
+             
+             #chatInput:focus {
+                 border-color: #3e92cc;
+             }
+             
+             #chatInput:disabled {
+                 background: #f1f5f9;
+                 cursor: not-allowed;
+             }
+             
+             .btn-send-message {
+                 width: 36px;
+                 height: 36px;
+                 background: linear-gradient(135deg, #3e92cc, #0a4c8c);
+                 color: white;
+                 border: none;
+                 border-radius: 50%;
+                 display: flex;
+                 align-items: center;
+                 justify-content: center;
+                 cursor: pointer;
+                 transition: all 0.3s;
+             }
+             
+             .btn-send-message:hover {
+                 transform: translateY(-2px);
+                 box-shadow: 0 2px 8px rgba(10, 76, 140, 0.3);
+             }
+             
+             .btn-send-message:disabled {
+                 background: #cbd5e1;
+                 cursor: not-allowed;
+                 transform: none;
+                 box-shadow: none;
+             }
+             
+             .visitor-message-chat {
+                 background: #f1f5f9;
+                 color: #64748b;
+                 padding: 8px;
+                 text-align: center;
+                 font-size: 0.85rem;
+                 border-top: 1px solid #e2e8f0;
+             }
+             
+             .visitor-message-chat a {
+                 color: #3e92cc;
+                 text-decoration: none;
+                 font-weight: 600;
+             }
+             
+             @keyframes fadeIn {
+                 from { opacity: 0; transform: translateY(10px); }
+                 to { opacity: 1; transform: translateY(0); }
+             }
+         `;
+         document.head.appendChild(chatStyles);
+
+         // Photo dialog and handler
+         function openPhotoDialog() {
+             const input = document.getElementById('photoInput');
+             if (!input) {
+                 console.warn('Photo input element not found');
+                 return;
+             }
+             input.click();
+         }
+
+         function handlePhotoSelect() {
+             const file = document.getElementById('photoInput').files[0];
+             if (file) {
+                 showToast(`<i class="fas fa-image"></i> Selected: ${file.name}`);
+             }
+         }
+
+         // Geolocation capture for post creation
+         function captureLocation() {
+             if (!navigator.geolocation) {
+                 showToast('<i class="fas fa-exclamation-circle"></i> Geolocation is not supported by your browser', true);
+                 return;
+             }
+             showToast('<i class="fas fa-spinner fa-spin"></i> Retrieving location...');
+             navigator.geolocation.getCurrentPosition(
+                 (pos) => {
+                     const { latitude, longitude } = pos.coords;
+                     const latEl = document.getElementById('latitudeInput'); if (latEl) latEl.value = latitude;
+                     const lngEl = document.getElementById('longitudeInput'); if (lngEl) lngEl.value = longitude;
+                     showToast(`<i class="fas fa-map-marker-alt"></i> Location captured (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`);
+                 },
+                 (err) => {
+                     showToast('<i class="fas fa-exclamation-triangle"></i> Unable to retrieve location', true);
+                     console.error('Geolocation error:', err);
+                 },
+                 { enableHighAccuracy: true, timeout: 10000 }
+             );
+         }
     </script>
 </body>
 </html>

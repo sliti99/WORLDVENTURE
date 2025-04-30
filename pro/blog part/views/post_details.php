@@ -25,6 +25,7 @@ $comments = $controller->getComments($postId);
 // Handle comment submission
 $commentError = '';
 $commentSuccess = false;
+$newCommentId = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comment'])) {
     if (!isLoggedIn()) {
@@ -37,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comment'])) {
             $commentError = 'Comment must be at least 3 characters long.';
         } else {
             try {
-                $controller->addComment($postId, $comment);
+                $newCommentId = $controller->addComment($postId, $comment);
                 $commentSuccess = true;
                 // Reload comments after adding a new one
                 $comments = $controller->getComments($postId);
@@ -477,7 +478,7 @@ $showSuccessMessage = isset($_GET['comment_success']) && $_GET['comment_success'
             <div class="post-actions">
                 <button 
                     id="reactionBtn" 
-                    class="reaction-btn <?= isLoggedIn() && $controller->model->hasUserReacted($post['id'], $_SESSION['user_id']) ? 'active' : '' ?>"
+                    class="reaction-btn <?= isLoggedIn() && $controller->hasUserReacted($post['id'], $_SESSION['user_id']) ? 'active' : '' ?>"
                     <?= !isLoggedIn() ? 'disabled' : '' ?>
                     onclick="handleReaction(<?= $post['id'] ?>)"
                 >
@@ -539,7 +540,7 @@ $showSuccessMessage = isset($_GET['comment_success']) && $_GET['comment_success'
             <div class="comment-list">
                 <?php if (count($comments) > 0): ?>
                     <?php foreach ($comments as $comment): ?>
-                    <div class="comment <?= $commentSuccess && $comment['id'] == $this->pdo->lastInsertId() ? 'new-comment' : '' ?>">
+                    <div class="comment <?= $commentSuccess && isset($newCommentId) && $comment['id'] == $newCommentId ? 'new-comment' : '' ?>">
                         <div class="comment-header">
                             <div class="comment-author">
                                 <?= htmlspecialchars($comment['author_name'] ?? 'Anonymous') ?>
@@ -558,7 +559,7 @@ $showSuccessMessage = isset($_GET['comment_success']) && $_GET['comment_success'
                         </div>
                         <div class="comment-actions">
                             <button 
-                                class="comment-reaction <?= isLoggedIn() && $controller->model->hasUserReacted($comment['id'], $_SESSION['user_id'], 'comment') ? 'active' : '' ?>"
+                                class="comment-reaction <?= isLoggedIn() && $controller->hasUserReacted($comment['id'], $_SESSION['user_id'], 'comment') ? 'active' : '' ?>"
                                 <?= !isLoggedIn() ? 'disabled' : '' ?>
                                 onclick="handleCommentReaction(<?= $comment['id'] ?>)"
                             >

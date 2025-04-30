@@ -1,134 +1,64 @@
-# WorldVenture Blog System
+# WorldVenture Travel Blog Platform
 
-A modern, responsive blog system for the WorldVenture travel platform with Facebook-like interaction features.
+A complete travel blog platform with real-time chat, user authentication, and content management.
 
 ## Features
 
-- **Complete CRUD Functionality**:
-  - Create, read, update, and delete blog posts
-  - Comment system with real-time updates
-  - Reaction system for posts and comments
+- Blog system with posts and comments
+- User authentication with role-based permissions
+- Admin dashboard for content management
+- Real-time chat with content filtering powered by Gemini AI
+- Responsive design for all devices
 
-- **Role-Based Access Control**:
-  - Admin: Full access to all features, including post management
-  - User: Can create posts, comment, and react
-  - Visitor: Read-only access to content
+## Setup Instructions
 
-- **Facebook-like UI/UX**:
-  - Responsive, modern interface
-  - Real-time post updates
-  - Interactive reactions and comments
+### Database Setup
+1. Import the `worldventure.sql` file into your MySQL database
+2. Update database connection settings in `blog part/config/config.php`
 
-- **Security**:
-  - Input validation on all forms
-  - PDO with prepared statements for database queries
-  - Role-based permissions enforcement
-
-## Technical Implementation
-
-### MVC Architecture
-
-The project follows the MVC (Model-View-Controller) pattern:
-
-- **Models**: Handle data, business logic, and database interactions
-- **Views**: Present data and handle user interface
-- **Controllers**: Process user requests and coordinate between models and views
-
-### Directory Structure
-
-```
-/blog part/
-    /config/         # Configuration files and authentication
-    /controllers/    # Controller logic
-    /models/         # Data models and database interactions
-    /views/          # Frontend templates
-
-/main_backoffice/   # Admin panel assets
-/main_front/        # Frontend assets
-```
-
-### Post and Comment System
-
-- Posts include title, content, and reactions
-- Comments can be added to posts with reactions
-- User feedback via notifications and UI animations
-
-### Authentication
-
-- Email and password login
-- Role-based session management
-- Secure logout functionality
-
-## Installation
-
-1. Import the SQL file `worldventure.sql` to your MySQL database
-2. Configure database credentials in `blog part/config/config.php`
-3. Ensure your web server can access the project directory
-4. Navigate to the main page via your web browser
-
-## User Credentials
-
-- **Admin**: admin@example.com / password
-- **User**: user@example.com / password
-
-## Technologies Used
-
-- PHP 8.2+
-- MySQL/MariaDB
-- HTML5, CSS3, JavaScript
-- FontAwesome for icons
-- Modern CSS features (Grid, Flexbox, Animations)
-
-## JavaScript Form Validation
-
-All forms implement client-side validation for improved user experience:
-- Post creation form validates title and content length
-- Comment form validates content length
-- Login form validates email format and password requirements
-
-## Developer Notes
-
-- The system uses PDO for database connectivity
-- Singleton pattern for database connection management
-- Prepared statements for SQL injection prevention
-- HTML escaping for XSS prevention
-
-# Real-time Features
-
-The system includes a real-time chat component powered by Socket.io:
-
-- Facebook-like chat widget in the bottom-right corner
-- Message filtering with Google's Gemini 2.5 Flash API to block inappropriate content
-- Support for multiple languages (English, French, and Tunisian dialect)
-- Role-based message styling and permissions
-- Ephemeral messages that clear after 8 hours of inactivity
-
-## Setting Up the Chat Server
-
-1. Install Node.js dependencies:
-   ```bash
-   cd /path/to/worldventure
-   npm install
+### Chat Server Setup
+1. Make sure Node.js is installed (v14+ recommended)
+2. Create a `.env` file with your Gemini API key:
    ```
-
-2. Configure your Gemini API key:
-   - Rename `.env.example` to `.env`
-   - Add your Google Gemini API key to the `.env` file
-
-3. Start the chat server:
-   ```bash
-   npm start
+   GEMINI_API_KEY=your_actual_api_key_here
+   PORT=3000
    ```
+3. Install dependencies: `npm install`
+4. Start the chat server: `npm start` or simply run `start-chat-server.bat`
+   - For development with auto-restart: `npm run dev`
 
-4. For development with auto-restart:
-   ```bash
-   npm run dev
-   ```
+### Web Server Setup
+1. Place the project folder in your web server directory (e.g., xampp/htdocs/)
+2. Access the site at: http://localhost/web.pro/inst/pro/pro/main_front/
 
-## Chat Server Features
+## Chat System
 
-- **Content Filtering**: Uses Google's Gemini 2.5 Flash to detect and block inappropriate content
-- **Admin Bypass**: Admin messages skip content filtering
-- **Room-Based Chat**: Current implementation uses a single 'general' room
-- **Message Persistence**: Messages are stored in memory with a configurable limit
-- **Ephemeral Messages**: Chat clears after 8 hours of inactivity
+The real-time chat feature uses:
+- Socket.io for real-time communication
+- Google's Gemini AI for content filtering
+- Automatic message cleanup after periods of inactivity
+
+### Content Filtering
+
+The chat server uses Gemini AI to filter inappropriate content:
+- Messages from regular users are checked for inappropriate content
+- Admin messages bypass the filter
+- The system consistently filters content by creating a new Gemini model instance for each request
+- If the Gemini API fails, messages are allowed through to prevent service disruption
+
+## User Roles
+
+- **Visitor**: Can view posts and chat but cannot create content
+- **User**: Can create posts, comments, and participate in chat
+- **Admin**: Full access to create, edit, and delete all content
+
+## Troubleshooting
+
+If the chat server isn't working properly:
+1. Check that Node.js is installed correctly
+2. Verify your Gemini API key in the `.env` file
+3. Make sure all dependencies are installed with `npm install`
+4. Check the console for any error messages
+5. Ensure port 3000 is available on your system
+
+For more assistance, contact the WorldVenture development team.
