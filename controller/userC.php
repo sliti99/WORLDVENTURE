@@ -36,8 +36,8 @@ class UserC
         $sql = "SELECT * FROM user";
         $db = config::getConnexion();
         try {
-            $liste = $db->query($sql);
-            return $liste;
+            $query = $db->query($sql);
+            return $query->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             die('Erreur : ' . $e->getMessage());
         }
@@ -126,6 +126,96 @@ class UserC
                 return false;
             }
         } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    public function getUserByEmail($email) {
+        $sql = "SELECT * FROM user WHERE email = :email";
+        try {
+            $db = config::getConnexion();
+            $query = $db->prepare($sql);
+            $query->execute(['email' => $email]);
+            return $query->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    // Vérifier si un email existe
+    public function emailExists($email) {
+        $sql = "SELECT * FROM users WHERE email = :email";
+        try {
+            $db = config::getConnexion();
+            $query = $db->prepare($sql);
+            $query->execute(['email' => $email]);
+            return $query->rowCount() > 0;
+        } catch (Exception $e) {
+            error_log("Error checking email: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Sauvegarder le token de réinitialisation
+    public function saveResetToken($email, $token, $expiry) {
+        $sql = "UPDATE users SET reset_token = :token, reset_token_expiry = :expiry WHERE email = :email";
+        try {
+            $db = config::getConnexion();
+            $query = $db->prepare($sql);
+            return $query->execute([
+                'token' => $token,
+                'expiry' => $expiry,
+                'email' => $email
+            ]);
+        } catch (Exception $e) {
+            error_log("Error saving reset token: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Vérifier si un token est valide et non expiré
+    public function checkResetToken($token) {
+        $sql = "SELECT * FROM users WHERE reset_token = :token AND reset_token_expiry > NOW()";
+        try {
+            $db = config::getConnexion();
+            $query = $db->prepare($sql);
+            $query->execute(['token' => $token]);
+            return $query->rowCount() > 0;
+        } catch (Exception $e) {
+            error_log("Error checking reset token: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Réinitialiser le mot de passe
+    public function resetPassword($token, $newPassword) {
+        $sql = "UPDATE users SET password = :password, reset_token = NULL, reset_token_expiry = NULL 
+                WHERE reset_token = :token AND reset_token_expiry > NOW()";
+        try {
+            $db = config::getConnexion();
+            $query = $db->prepare($sql);
+            return $query->execute([
+                'password' => password_hash($newPassword, PASSWORD_DEFAULT),
+                'token' => $token
+            ]);
+        } catch (Exception $e) {
+            error_log("Error resetting password: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Mettre à jour le mot de passe
+    public function updatePassword($email, $newPassword) {
+        $sql = "UPDATE user SET mdp = :password WHERE email = :email";
+        try {
+            $db = config::getConnexion();
+            $query = $db->prepare($sql);
+            return $query->execute([
+                'password' => password_hash($newPassword, PASSWORD_DEFAULT),
+                'email' => $email
+            ]);
+        } catch (Exception $e) {
+            error_log("Error updating password: " . $e->getMessage());
             return false;
         }
     }

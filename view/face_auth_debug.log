@@ -1,0 +1,47 @@
+[02-May-2025 23:41:53 Europe/Berlin] === Nouvelle requête Face ID ===
+[02-May-2025 23:41:53 Europe/Berlin] Date et heure: 2025-05-02 23:41:53
+[02-May-2025 23:41:53 Europe/Berlin] Méthode HTTP: POST
+[02-May-2025 23:41:53 Europe/Berlin] Content-Type: application/json
+[02-May-2025 23:41:53 Europe/Berlin] Longueur des données reçues: 5268 bytes
+[02-May-2025 23:41:53 Europe/Berlin] Début des données: {"faceImage":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQ...
+[02-May-2025 23:41:53 Europe/Berlin] Données JSON décodées avec succès
+[02-May-2025 23:41:53 Europe/Berlin] Validation des données OK
+[02-May-2025 23:41:53 Europe/Berlin] Email reçu: dddgghg@gm.com
+[02-May-2025 23:41:53 Europe/Berlin] Taille de l'image: 5227 caractères
+[02-May-2025 23:41:53 Europe/Berlin] Utilisateur trouvé. ID: 23
+[02-May-2025 23:41:53 Europe/Berlin] Données faciales trouvées. Longueur: 51084
+[02-May-2025 23:41:53 Europe/Berlin] Début de la comparaison des visages
+[02-May-2025 23:41:53 Europe/Berlin] Début de compareFaces()
+[02-May-2025 23:41:53 Europe/Berlin] Images décodées. Tailles - Capturée: 3901, Référence: 38312
+[02-May-2025 23:41:53 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function imagecreatefromstring() in C:\xampp\htdocs\user\view\check_face_auth.php:143
+Stack trace:
+#0 C:\xampp\htdocs\user\view\check_face_auth.php(84): compareFaces('data:image/jpeg...', '/9j/4AAQSkZJRgA...')
+#1 {main}
+  thrown in C:\xampp\htdocs\user\view\check_face_auth.php on line 143
+[02-May-2025 23:43:42 Europe/Berlin] Début de compareFaces()
+[02-May-2025 23:43:42 Europe/Berlin] Images décodées. Tailles - Capturée: 4225, Référence: 38312
+[02-May-2025 23:43:42 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function imagecreatefromstring() in C:\xampp\htdocs\user\view\check_face_auth.php:113
+Stack trace:
+#0 C:\xampp\htdocs\user\view\check_face_auth.php(69): compareFaces('data:image/jpeg...', '/9j/4AAQSkZJRgA...')
+#1 {main}
+  thrown in C:\xampp\htdocs\user\view\check_face_auth.php on line 113
+[02-May-2025 23:46:11 Europe/Berlin] 2025-05-02 23:46:11 - Début de la requête Face ID - Context: {"method":"POST"}
+[02-May-2025 23:46:11 Europe/Berlin] 2025-05-02 23:46:11 - Données reçues - Context: {"length":5540}
+[02-May-2025 23:46:11 Europe/Berlin] 2025-05-02 23:46:11 - JSON décodé avec succès - Context: []
+[02-May-2025 23:46:11 Europe/Berlin] 2025-05-02 23:46:11 - Données validées - Context: {"email":"dddgghg@gm.com"}
+[02-May-2025 23:46:11 Europe/Berlin] 2025-05-02 23:46:11 - Utilisateur trouvé - Context: {"id":23}
+[02-May-2025 23:46:11 Europe/Berlin] 2025-05-02 23:46:11 - Données faciales trouvées - Context: []
+[02-May-2025 23:46:11 Europe/Berlin] 2025-05-02 23:46:11 - Début de la comparaison des visages - Context: []
+[02-May-2025 23:46:11 Europe/Berlin] 2025-05-02 23:46:11 - Début de compareFaces() - Context: []
+[02-May-2025 23:46:11 Europe/Berlin] 2025-05-02 23:46:11 - Images décodées - Context: {"captured_size":4105,"reference_size":38312}
+[02-May-2025 23:46:11 Europe/Berlin] 2025-05-02 23:46:11 - Erreur globale - Context: {"message":"Call to undefined function imagecreatefromstring()","file":"C:\\xampp\\htdocs\\user\\view\\check_face_auth.php","line":155}
+[02-May-2025 23:51:14 Europe/Berlin] 2025-05-02 23:51:14 - Début de la requête Face ID - Context: {"method":"POST"}
+[02-May-2025 23:51:14 Europe/Berlin] 2025-05-02 23:51:14 - Données reçues - Context: {"length":5900}
+[02-May-2025 23:51:14 Europe/Berlin] 2025-05-02 23:51:14 - JSON décodé avec succès - Context: []
+[02-May-2025 23:51:14 Europe/Berlin] 2025-05-02 23:51:14 - Données validées - Context: {"email":"dddgghg@gm.com"}
+[02-May-2025 23:51:14 Europe/Berlin] 2025-05-02 23:51:14 - Utilisateur trouvé - Context: {"id":23}
+[02-May-2025 23:51:14 Europe/Berlin] 2025-05-02 23:51:14 - Données faciales trouvées - Context: []
+[02-May-2025 23:51:14 Europe/Berlin] 2025-05-02 23:51:14 - Début de la comparaison des visages - Context: []
+[02-May-2025 23:51:14 Europe/Berlin] 2025-05-02 23:51:14 - Début de compareFaces() - Context: []
+[02-May-2025 23:51:14 Europe/Berlin] 2025-05-02 23:51:14 - Images décodées - Context: {"captured_size":4376,"reference_size":38312}
+[02-May-2025 23:51:14 Europe/Berlin] 2025-05-02 23:51:14 - Erreur globale - Context: {"message":"Call to undefined function imagecreatefromstring()","file":"C:\\xampp\\htdocs\\user\\view\\check_face_auth.php","line":155}

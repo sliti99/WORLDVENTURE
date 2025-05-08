@@ -17,28 +17,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     require_once('../controller/userC.php');
     
     if (isset($_POST['email']) && isset($_POST['password'])) {
-        $userC = new UserC();
-        $email = trim($_POST['email']);
-        $password = trim($_POST['password']);
+        // Vérification du reCAPTCHA
+        $recaptcha_secret = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe";
+        $recaptcha_response = isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '';
         
-        // Vérifier les identifiants
-        $user = $userC->verifyLogin($email, $password);
-        
-        if ($user) {
-            // Connexion réussie
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_role'] = $user['role'];
-            
-            // Redirection selon le rôle
-            if ($user['role'] === 'admin') {
-                header("Location: liste.php");
-            } else {
-                header("Location: front-office/index11.php");
-            }
-            exit();
-        } else {
-            $message = "Email ou mot de passe incorrect.";
+        if (empty($recaptcha_response)) {
+            $message = "Veuillez compléter le reCAPTCHA.";
             $messageType = 'error';
+        } else {
+            // Vérification du reCAPTCHA avec l'API Google
+            $verify_response = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$recaptcha_secret.'&response='.$recaptcha_response);
+            $response_data = json_decode($verify_response);
+            
+            if (!$response_data->success) {
+                $message = "La vérification reCAPTCHA a échoué. Veuillez réessayer.";
+                if (isset($response_data->{'error-codes'}) && is_array($response_data->{'error-codes'})) {
+                    // Log détaillé des erreurs pour le débogage
+                    error_log("reCAPTCHA error: " . implode(", ", $response_data->{'error-codes'}));
+                }
+                $messageType = 'error';
+            } else {
+                // Score minimum requis (0.5 est la valeur recommandée)
+                $score_threshold = 0.5;
+                
+                // Vérification des identifiants
+                $userC = new UserC();
+                $email = trim($_POST['email']);
+                $password = trim($_POST['password']);
+                
+                $user = $userC->verifyLogin($email, $password);
+                
+                if ($user) {
+                    // Connexion réussie
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['user_role'] = $user['role'];
+                    
+                    // Redirection selon le rôle
+                    if ($user['role'] === 'admin') {
+                        header("Location: liste.php");
+                    } else {
+                        header("Location: front-office/index11.php");
+                    }
+                    exit();
+                } else {
+                    $message = "Email ou mot de passe incorrect.";
+                    $messageType = 'error';
+                }
+            }
         }
     }
 }
@@ -50,6 +75,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorldVenture - Connexion</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         * {
             margin: 0;
@@ -71,11 +98,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('../view/front-office/background.jpg');
-            background-size: cover;
-            background-position: center;
-            filter: brightness(0.5) blur(2px);
+            background: linear-gradient(135deg, #1e4e8e, #4e79b7);
             z-index: -2;
+        }
+
+        /* Fallback si l'image ne charge pas */
+        .background-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e4e8e, #4e79b7);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .background-image.error::after {
+            opacity: 1;
         }
 
         .overlay {
@@ -289,6 +330,79 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
+        /* Styles pour le reCAPTCHA */
+        .g-recaptcha {
+            transform-origin: left top;
+            margin: 10px 0;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px;
+        }
+
+        .g-recaptcha iframe {
+            border-radius: 4px;
+        }
+
+        .recaptcha-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .recaptcha-error {
+            color: #ef4444;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            text-align: center;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .recaptcha-error.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @media screen and (max-width: 480px) {
+            .g-recaptcha {
+                transform: scale(0.85);
+                margin: 10px -20px;
+            }
+            
+            .recaptcha-container {
+                margin: 10px 0;
+            }
+        }
+
+        /* Style pour le bouton désactivé */
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #808080, #606060);
+        }
+
+        /* Animation de chargement pour le reCAPTCHA */
+        .recaptcha-loading {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -366,6 +480,149 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 padding: 1.5rem;
             }
         }
+
+        .face-id-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        #status-message {
+            transition: all 0.3s ease;
+        }
+
+        #status-message.success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        #status-message.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        #status-message.processing {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        @keyframes scanning {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .scanning-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #1e90ff, transparent);
+            animation: scanning 2s linear infinite;
+        }
+
+        #face-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border: 2px solid #1e90ff;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .detection-box {
+            position: absolute;
+            border: 2px solid #1e90ff;
+            border-radius: 4px;
+            background-color: rgba(30, 144, 255, 0.2);
+        }
+
+        .loading-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            text-align: center;
+        }
+
+        .scanning-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, 
+                transparent 0%,
+                rgba(30, 144, 255, 0.2) 50%,
+                transparent 100%
+            );
+            animation: scan 2s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        #camera-container {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            margin: 20px auto;
+            position: relative;
+            border-radius: 1rem;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .face-guide {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border: 3px solid #1e90ff;
+            border-radius: 50%;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+        }
+
+        .face-guide::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 210px;
+            height: 210px;
+            border: 2px solid rgba(30, 144, 255, 0.3);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.5; }
+        }
+
+        .simulated-video {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a, #333);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 48px;
+        }
     </style>
 </head>
 <body>
@@ -387,7 +644,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="">
+        <form method="POST" action="" id="loginForm" onsubmit="validateForm(event)">
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="Votre adresse email" required>
@@ -398,10 +655,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="password" id="password" name="password" placeholder="Votre mot de passe" required>
             </div>
 
-            <button type="submit" class="submit-btn">Se connecter</button>
+            <div class="form-group" style="display: flex; justify-content: center; margin: 20px 0;">
+                <div class="g-recaptcha" 
+                     data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                     data-callback="enableSubmit"
+                     data-expired-callback="disableSubmit"
+                     data-error-callback="disableSubmit"></div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">Se connecter</button>
+
+            <div class="face-id-section" style="text-align: center; margin-top: 1rem;">
+                <button type="button" class="face-id-btn" onclick="startFaceID()" style="
+                    background: none;
+                    border: 2px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 1rem;
+                    padding: 0.8rem 1.5rem;
+                    color: white;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto;
+                    transition: all 0.3s ease;
+                ">
+                    <i class="fas fa-face-viewfinder" style="margin-right: 8px;"></i>
+                    Se connecter avec Face ID
+                </button>
+            </div>
 
             <div class="links">
-                <a href="#">Mot de passe oublié ?</a>
+                <a href="forgot-password.php">Mot de passe oublié ?</a>
                 <a href="#" onclick="openModal(); return false;">Créer un compte</a>
             </div>
 
@@ -417,62 +701,142 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div id="signupModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
-            <h2>Créer un compte</h2>
-            <form method="POST" action="../controller/register.php" id="signupForm" novalidate>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="signup-nom">Nom complet</label>
-                        <input type="text" id="signup-nom" name="nom" placeholder="Votre nom complet">
-                        <div class="error-message" id="nom-error"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="signup-email">Email</label>
-                        <input type="email" id="signup-email" name="email" placeholder="Votre email">
-                        <div class="error-message" id="email-error"></div>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="signup-password">Mot de passe</label>
-                        <input type="password" id="signup-password" name="password" placeholder="Votre mot de passe">
-                        <div class="password-strength">
-                            <div class="password-strength-bar" id="password-strength-bar"></div>
+            <div id="signup-step-1">
+                <h2>Créer un compte</h2>
+                <form method="POST" action="../controller/register.php" id="signupForm" novalidate>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="signup-nom">Nom complet</label>
+                            <input type="text" id="signup-nom" name="nom" placeholder="Votre nom complet">
+                            <div class="error-message" id="nom-error"></div>
                         </div>
-                        <div class="error-message" id="password-error"></div>
+                        <div class="form-group">
+                            <label for="signup-email">Email</label>
+                            <input type="email" id="signup-email" name="email" placeholder="Votre email">
+                            <div class="error-message" id="email-error"></div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="signup-confirm-password">Confirmer le mot de passe</label>
-                        <input type="password" id="signup-confirm-password" name="confirm_password" placeholder="Confirmez le mot de passe">
-                        <div class="error-message" id="confirm-password-error"></div>
-                    </div>
-                </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="signup-tel">Téléphone</label>
-                        <input type="tel" id="signup-tel" name="tel" placeholder="Votre numéro de téléphone">
-                        <div class="error-message" id="tel-error"></div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="signup-password">Mot de passe</label>
+                            <input type="password" id="signup-password" name="password" placeholder="Votre mot de passe">
+                            <div class="password-strength">
+                                <div class="password-strength-bar" id="password-strength-bar"></div>
+                            </div>
+                            <div class="error-message" id="password-error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-confirm-password">Confirmer le mot de passe</label>
+                            <input type="password" id="signup-confirm-password" name="confirm_password" placeholder="Confirmez le mot de passe">
+                            <div class="error-message" id="confirm-password-error"></div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="signup-ville">Ville</label>
-                        <input type="text" id="signup-ville" name="ville" placeholder="Votre ville">
-                        <div class="error-message" id="ville-error"></div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="signup-tel">Téléphone</label>
+                            <input type="tel" id="signup-tel" name="tel" placeholder="Votre numéro de téléphone">
+                            <div class="error-message" id="tel-error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-ville">Ville</label>
+                            <input type="text" id="signup-ville" name="ville" placeholder="Votre ville">
+                            <div class="error-message" id="ville-error"></div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="signup-daten">Date de naissance</label>
-                    <input type="date" id="signup-daten" name="daten">
-                    <div class="error-message" id="daten-error"></div>
-                </div>
+                    <div class="form-group">
+                        <label for="signup-daten">Date de naissance</label>
+                        <input type="date" id="signup-daten" name="daten">
+                        <div class="error-message" id="daten-error"></div>
+                    </div>
 
-                <button type="submit" class="submit-btn">Créer mon compte</button>
-            </form>
+                    <input type="hidden" name="face_data" id="face_data">
+                    <button type="submit" class="submit-btn">Créer mon compte</button>
+                </form>
+            </div>
+
+            <!-- Face Capture Step -->
+            <div id="signup-step-2" style="display: none;">
+                <h2>Configurer Face ID</h2>
+                <div id="face-capture-container" style="
+                    width: 100%;
+                    max-width: 400px;
+                    height: 300px;
+                    margin: 20px auto;
+                    position: relative;
+                    border-radius: 1rem;
+                    overflow: hidden;
+                ">
+                    <video id="signup-video" style="
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        border-radius: 1rem;
+                    " autoplay playsinline></video>
+                    <canvas id="signup-canvas" style="display: none;"></canvas>
+                    <div class="face-guide"></div>
+                    <div class="scanning-animation"></div>
+                </div>
+                <div id="capture-status" style="
+                    margin: 1rem 0;
+                    text-align: center;
+                    font-weight: 500;
+                    color: #ffffff;
+                "></div>
+                <button onclick="captureFace()" class="submit-btn" style="margin-top: 1rem;">
+                    Capturer mon visage
+                </button>
+            </div>
+
+            <!-- Email Verification Step -->
+            <div id="signup-step-3" style="display: none;">
+                <h2>Vérification Email</h2>
+                <p style="text-align: center; margin: 2rem 0;">
+                    Un email de vérification a été envoyé à votre adresse email.
+                    Veuillez vérifier votre boîte de réception et cliquer sur le lien de confirmation.
+                </p>
+                <div style="text-align: center;">
+                    <button onclick="checkEmailVerification()" class="submit-btn">
+                        J'ai vérifié mon email
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Face ID -->
+    <div id="faceIDModal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close-modal" onclick="closeFaceIDModal()">&times;</span>
+            <h2>Connexion Face ID</h2>
+            <div id="camera-container">
+                <video id="video" style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 1rem;
+                " autoplay playsinline></video>
+                <div class="face-guide"></div>
+                <div class="scanning-animation"></div>
+            </div>
+            <div id="status-message" style="margin-top: 1rem;"></div>
         </div>
     </div>
 
     <script>
+        // Ajouter la gestion d'erreur pour l'image de fond
+        window.addEventListener('load', function() {
+            const bgImage = document.querySelector('.background-image');
+            const img = new Image();
+            img.src = '../view/front-office/background.jpg';
+            
+            img.onerror = function() {
+                bgImage.classList.add('error');
+            };
+        });
+
         function openModal() {
             document.getElementById('signupModal').style.display = 'block';
             document.body.style.overflow = 'hidden';
@@ -484,9 +848,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         window.onclick = function(event) {
-            const modal = document.getElementById('signupModal');
-            if (event.target == modal) {
+            const signupModal = document.getElementById('signupModal');
+            const faceIDModal = document.getElementById('faceIDModal');
+            if (event.target == signupModal) {
                 closeModal();
+            } else if (event.target == faceIDModal) {
+                closeFaceIDModal();
             }
         }
 
@@ -631,6 +998,351 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 e.preventDefault();
             }
         });
+
+        // Face ID Implementation with face-api.js
+        let videoStream = null;
+        let isModelLoaded = false;
+
+        async function loadFaceApiModels() {
+            const modelPath = 'https://justadudewhohacks.github.io/face-api.js/models';
+            try {
+                await Promise.all([
+                    faceapi.nets.tinyFaceDetector.loadFromUri(modelPath),
+                    faceapi.nets.faceLandmark68Net.loadFromUri(modelPath),
+                    faceapi.nets.faceRecognitionNet.loadFromUri(modelPath)
+                ]);
+                isModelLoaded = true;
+                return true;
+            } catch (error) {
+                console.error('Erreur de chargement des modèles:', error);
+                return false;
+            }
+        }
+
+        async function startFaceID() {
+            const emailInput = document.getElementById('email');
+            
+            // Vérifier si l'email est saisi
+            if (!emailInput.value) {
+                alert('Veuillez saisir votre email avant d\'utiliser Face ID');
+                return;
+            }
+
+            const modal = document.getElementById('faceIDModal');
+            const video = document.getElementById('video');
+            const statusMessage = document.getElementById('status-message');
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+
+            try {
+                // Demander l'accès à la caméra
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
+                });
+                
+                video.srcObject = stream;
+                videoStream = stream;
+                
+                // Démarrer la simulation d'authentification
+                startFaceDetection();
+                
+            } catch (error) {
+                console.error('Erreur d\'accès à la caméra:', error);
+                statusMessage.textContent = "Erreur d'accès à la caméra. Veuillez vérifier vos permissions.";
+                statusMessage.className = 'error';
+            }
+        }
+
+        function closeFaceIDModal() {
+            const modal = document.getElementById('faceIDModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            // Arrêter la caméra
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+            }
+        }
+
+        async function startFaceDetection() {
+            const statusMessage = document.getElementById('status-message');
+            const emailInput = document.getElementById('email');
+
+            statusMessage.textContent = "Initialisation de Face ID...";
+            statusMessage.className = 'processing';
+
+            // Simuler une détection de 3 secondes
+            setTimeout(() => {
+                statusMessage.textContent = "Visage détecté ! Authentification...";
+                
+                // Simuler l'authentification après 2 secondes
+                setTimeout(async () => {
+                    try {
+                        const response = await fetch('../controller/check_face_auth.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                email: emailInput.value,
+                                faceDetected: true
+                            })
+                        });
+
+                        let data;
+                        const contentType = response.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            data = await response.json();
+                        } else {
+                            throw new Error("La réponse du serveur n'est pas au format JSON");
+                        }
+
+                        if (data.success) {
+                            statusMessage.textContent = "Authentification réussie !";
+                            statusMessage.className = 'success';
+                            
+                            // Redirection basée sur le rôle
+                            setTimeout(() => {
+                                if (data.role === 'admin') {
+                                    window.location.href = 'liste.php';
+                                } else {
+                                    window.location.href = 'front-office/index11.php';
+                                }
+                            }, 1000);
+                        } else {
+                            throw new Error(data.message || 'Authentification échouée');
+                        }
+                    } catch (error) {
+                        console.error('Erreur:', error);
+                        statusMessage.textContent = error.message || "Une erreur est survenue lors de l'authentification";
+                        statusMessage.className = 'error';
+                        setTimeout(closeFaceIDModal, 2000);
+                    }
+                }, 2000);
+            }, 3000);
+        }
+
+        // Variables pour la capture du visage
+        let signupVideoStream = null;
+        let faceDetected = false;
+        let currentStep = 1;
+
+        // Fonction pour passer à l'étape suivante
+        function goToStep(step) {
+            document.getElementById(`signup-step-${currentStep}`).style.display = 'none';
+            document.getElementById(`signup-step-${step}`).style.display = 'block';
+            currentStep = step;
+
+            if (step === 2) {
+                startFaceCapture();
+            }
+        }
+
+        // Gestion du formulaire d'inscription
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Vérification des champs
+            let hasErrors = false;
+            const inputs = this.querySelectorAll('input');
+            inputs.forEach(input => {
+                validateField(input);
+                if (input.parentElement.querySelector('.error-message').classList.contains('show')) {
+                    hasErrors = true;
+                }
+            });
+
+            if (hasErrors) {
+                return;
+            }
+
+            try {
+                const formData = new FormData(this);
+                const response = await fetch('../controller/register.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+
+                const contentType = response.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
+                    throw new Error("La réponse du serveur n'est pas au format JSON");
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Afficher un message de succès
+                    const alert = document.createElement('div');
+                    alert.className = 'alert success';
+                    alert.textContent = data.message;
+                    this.insertBefore(alert, this.firstChild);
+
+                    // Passer à l'étape suivante après un court délai
+                    setTimeout(() => {
+                        goToStep(2);
+                    }, 1500);
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                
+                // Afficher l'erreur dans le formulaire
+                const alert = document.createElement('div');
+                alert.className = 'alert error';
+                alert.textContent = error.message || "Une erreur est survenue lors de l'inscription";
+                this.insertBefore(alert, this.firstChild);
+
+                // Supprimer le message d'erreur après 5 secondes
+                setTimeout(() => {
+                    alert.remove();
+                }, 5000);
+            }
+        });
+
+        async function startFaceCapture() {
+            const video = document.getElementById('signup-video');
+            const statusMessage = document.getElementById('capture-status');
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 400 },
+                        height: { ideal: 300 }
+                    } 
+                });
+                
+                signupVideoStream = stream;
+                video.srcObject = stream;
+                
+                // Afficher un message de guidage simple
+                statusMessage.textContent = "Positionnez votre visage dans le cercle";
+                statusMessage.style.color = '#ffffff';
+                
+            } catch (error) {
+                console.error('Erreur d\'accès à la caméra:', error);
+                statusMessage.textContent = "Erreur d'accès à la caméra";
+                statusMessage.style.color = '#ef4444';
+            }
+        }
+
+        async function captureFace() {
+            const video = document.getElementById('signup-video');
+            const canvas = document.getElementById('signup-canvas');
+            const context = canvas.getContext('2d');
+            const statusMessage = document.getElementById('capture-status');
+
+            try {
+                statusMessage.textContent = "Capture en cours...";
+                statusMessage.style.color = '#ffffff';
+
+                // Vérifier que la vidéo est bien chargée
+                if (!video.videoWidth || !video.videoHeight) {
+                    throw new Error('La caméra n\'est pas encore prête');
+                }
+
+                // Capturer l'image
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                let imageData;
+                try {
+                    imageData = canvas.toDataURL('image/jpeg', 0.8);
+                } catch (e) {
+                    throw new Error('Erreur lors de la capture de l\'image');
+                }
+
+                // Vérifier que l'image n'est pas vide
+                if (!imageData || imageData === 'data:,') {
+                    throw new Error('Image invalide');
+                }
+
+                statusMessage.textContent = "Envoi de l'image...";
+
+                // Envoyer l'image au serveur
+                const response = await fetch('../controller/save_face.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        face_data: imageData
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur serveur: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusMessage.textContent = "Image sauvegardée avec succès !";
+                    statusMessage.style.color = '#10b981';
+
+                    // Arrêter la caméra
+                    if (signupVideoStream) {
+                        signupVideoStream.getTracks().forEach(track => track.stop());
+                    }
+                    
+                    // Attendre un peu pour montrer le message de succès
+                    setTimeout(() => {
+                        // Passer à l'étape de vérification email
+                        goToStep(3);
+                    }, 1000);
+                } else {
+                    throw new Error(data.message || 'Erreur lors de la sauvegarde');
+                }
+            } catch (error) {
+                console.error('Erreur détaillée:', error);
+                statusMessage.textContent = error.message || "Une erreur est survenue. Veuillez réessayer.";
+                statusMessage.style.color = '#ef4444';
+            }
+        }
+
+        async function checkEmailVerification() {
+            try {
+                const response = await fetch('../controller/check_email_verification.php');
+                const data = await response.json();
+                
+                if (data.verified) {
+                    alert('Compte vérifié avec succès !');
+                    window.location.href = 'signin.php';
+                } else {
+                    alert('Veuillez vérifier votre email pour continuer');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur lors de la vérification');
+            }
+        }
+
+        // Fonction pour vérifier si le reCAPTCHA est complété
+        function validateForm(event) {
+            event.preventDefault();
+            var response = grecaptcha.getResponse();
+            
+            if (response.length === 0) {
+                alert('Veuillez compléter le reCAPTCHA');
+                return false;
+            }
+            
+            // Si le reCAPTCHA est validé, soumettre le formulaire
+            document.getElementById('loginForm').submit();
+        }
     </script>
 </body>
 </html> 

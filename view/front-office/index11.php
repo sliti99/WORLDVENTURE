@@ -11,6 +11,13 @@ if (!isset($_SESSION['user_id'])) {
 // Récupérer les informations de l'utilisateur
 $userC = new UserC();
 $user = $userC->showUser($_SESSION['user_id']);
+
+// Rediriger si l'utilisateur n'est pas trouvé
+if (!$user || !is_array($user)) {
+    session_destroy();
+    header("Location: ../../signin.php?error=" . urlencode("Session invalide. Veuillez vous reconnecter."));
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -404,8 +411,8 @@ $user = $userC->showUser($_SESSION['user_id']);
         </button>
         <div class="profile-dropdown" id="profileDropdown">
             <div class="profile-info">
-                <h3><?php echo htmlspecialchars($user['nom']); ?></h3>
-                <p><?php echo htmlspecialchars($user['email']); ?></p>
+                <h3><?php echo isset($user['nom']) ? htmlspecialchars($user['nom']) : 'Utilisateur'; ?></h3>
+                <p><?php echo isset($user['email']) ? htmlspecialchars($user['email']) : 'Email non disponible'; ?></p>
             </div>
             <div class="profile-actions">
                 <a href="profile.php">

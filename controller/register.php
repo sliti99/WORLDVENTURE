@@ -1,19 +1,28 @@
 <?php
+// Désactiver l'affichage des erreurs PHP
+error_reporting(0);
+ini_set('display_errors', 0);
+
+// S'assurer que la réponse est toujours en JSON
+header('Content-Type: application/json');
+
 require_once('config.php');
 require_once('userC.php');
 require_once('../model/user.php');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+try {
     // Récupération des données du formulaire
-    $nom = trim($_POST['nom'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $password = trim($_POST['password'] ?? '');
-    $tel = trim($_POST['tel'] ?? '');
-    $ville = trim($_POST['ville'] ?? '');
-    $daten = trim($_POST['daten'] ?? '');
-
+    $formData = $_POST;
+    
     // Validation des données
     $errors = [];
+
+    $nom = trim($formData['nom'] ?? '');
+    $email = trim($formData['email'] ?? '');
+    $password = trim($formData['password'] ?? '');
+    $tel = trim($formData['tel'] ?? '');
+    $ville = trim($formData['ville'] ?? '');
+    $daten = trim($formData['daten'] ?? '');
 
     if (empty($nom) || strlen($nom) < 3) {
         $errors[] = "Le nom doit contenir au moins 3 caractères";
@@ -46,49 +55,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    if (empty($errors)) {
-        try {
-            // Vérifier si l'email existe déjà
-            $db = config::getConnexion();
-            $checkEmail = $db->prepare("SELECT id FROM user WHERE email = ?");
-            $checkEmail->execute([$email]);
-            
-            if ($checkEmail->rowCount() > 0) {
-                header("Location: ../view/signin.php?error=" . urlencode("Cette adresse email est déjà utilisée"));
-                exit();
-            }
-
-            // Créer un nouvel utilisateur
-            $user = new User();
-            $user->setNom($nom);
-            $user->setEmail($email);
-            $user->setMdp(password_hash($password, PASSWORD_BCRYPT));
-            $user->setTel($tel);
-            $user->setVille($ville);
-            $user->setDaten($daten);
-            $user->setRole('user'); // Rôle par défaut
-
-            $userC = new UserC();
-            $result = $userC->addUser($user);
-
-            if (strpos($result, "succès") !== false) {
-                header("Location: ../view/signin.php?success=1");
-                exit();
-            } else {
-                header("Location: ../view/signin.php?error=" . urlencode("Erreur lors de l'inscription"));
-                exit();
-            }
-
-        } catch (Exception $e) {
-            header("Location: ../view/signin.php?error=" . urlencode("Une erreur est survenue"));
-            exit();
-        }
-    } else {
-        header("Location: ../view/signin.php?error=" . urlencode(implode(", ", $errors)));
-        exit();
+    if (!empty($errors)) {
+        throw new Exception(implode(", ", $errors));
     }
-} else {
-    header("Location: ../view/signin.php");
-    exit();
+
+    // Vérifier si l'email existe déjà
+    $db = config::getConnexion();
+    $checkEmail = $db->prepare("SELECT id FROM user WHERE email = ?");
+    $checkEmail->execute([$email]);
+    
+    if ($checkEmail->rowCount() > 0) {
+        throw new Exception("Cette adresse email est déjà utilisée");
+    }
+
+    // Créer un nouvel utilisateur
+    $user = new User();
+    $user->setNom($nom);
+    $user->setEmail($email);
+    $user->setMdp(password_hash($password, PASSWORD_BCRYPT));
+    $user->setTel($tel);
+    $user->setVille($ville);
+    $user->setDaten($daten);
+    $user->setRole('user'); // Rôle par défaut
+
+    $userC = new UserC();
+    $result = $userC->addUser($user);
+
+    if (strpos($result, "succès") !== false) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Inscription réussie'
+        ]);
+    } else {
+        throw new Exception("Erreur lors de l'inscription");
+    }
+
+} catch (Exception $e) {
+    http_response_code(400);
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage()
+    ]);
 }
 ?> 
