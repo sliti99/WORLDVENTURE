@@ -1,4 +1,5 @@
 <?php
+// Ensure paths are correct for the current directory structure
 require_once '../config/config.php';
 
 // View-specific code starts here
@@ -28,7 +29,10 @@ $data = $controller->handleRequest();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorldVenture Blog</title>
     <link rel="stylesheet" href="../../main_front/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Replace problematic Font Awesome with a more reliable version -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="js/validation.js"></script>
+    <script src="js/chat.js"></script>
     <style>
         /* Facebook-like styling */
         .blog-container {
@@ -481,9 +485,194 @@ $data = $controller->handleRequest();
             border-color: #ef4444 !important;
             background-color: rgba(254, 226, 226, 0.3);
         }
+
+        /* Chat Interface Styling */
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 400px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            padding: 10px 15px;
+            background: #3e92cc;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .chat-header .toggle-chat {
+            transform: rotate(0deg);
+            transition: transform 0.3s ease;
+        }
+        
+        .chat-container.minimized {
+            height: 40px;
+        }
+        
+        .chat-container.minimized .toggle-chat {
+            transform: rotate(180deg);
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .chat-message {
+            padding: 8px 12px;
+            border-radius: 18px;
+            max-width: 70%;
+            word-break: break-word;
+        }
+        
+        .chat-message.mine {
+            background: #3e92cc;
+            color: white;
+            align-self: flex-end;
+        }
+        
+        .chat-message.other {
+            background: #f1f0f0;
+            color: #333;
+            align-self: flex-start;
+        }
+        
+        .chat-message .author {
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        
+        .chat-message.admin .author {
+            color: #e74c3c;
+        }
+        
+        .chat-input-wrapper {
+            padding: 10px;
+            border-top: 1px solid #eee;
+            display: flex;
+            background: white;
+        }
+        
+        .chat-input {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 15px;
+            outline: none;
+        }
+        
+        .chat-input:focus {
+            border-color: #3e92cc;
+        }
+        
+        .send-btn {
+            border: none;
+            background: #3e92cc;
+            color: white;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .send-btn:hover {
+            background: #2c7cb8;
+            transform: scale(1.05);
+        }
+        
+        .send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .chat-notification {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            display: none;
+        }
+        
+        /* Make sure the background matches the main site */
+        body {
+            background: url('../../main_front/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: rgba(255, 255, 255, 0.85);  /* Semi-transparent white overlay */
+        }
+        
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(150%);
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: transform 0.3s ease-out;
+            z-index: 1001;
+        }
+        
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        /* Error styling for form validation */
+        .error {
+            border-color: #e74c3c !important;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
     </style>
 </head>
-<body>
+<body data-role="<?= htmlspecialchars(getUserRole()) ?>" data-user-id="<?= htmlspecialchars($_SESSION['user_id'] ?? 0) ?>">
     <div class="background-image"></div>
     <!-- Global hidden inputs for photo and geolocation -->
     <input type="file" id="photoInput" name="photo" accept="image/*" style="display:none" onchange="handlePhotoSelect()">
@@ -527,8 +716,7 @@ $data = $controller->handleRequest();
     </header>
 
     <div class="blog-container">
-        <?php if (getUserRole() !== 'visitor'): ?>
-        <!-- Enhanced Facebook-like post creation card -->
+        <!-- Enhanced Facebook-like post creation card with validation -->
         <div class="post-creation-card">
             <div class="post-author">
                 <div class="post-author-avatar">
@@ -548,7 +736,7 @@ $data = $controller->handleRequest();
                     id="postTitle"
                     placeholder="What's on your mind today?"
                     class="post-title-input"
-                    onkeyup="validatePost()"
+                    onkeyup="validatePostForm()"
                     aria-describedby="titleError"
                 >
                 <div id="titleError" class="validation-error">Title cannot be empty.</div>
@@ -556,7 +744,7 @@ $data = $controller->handleRequest();
                     class="post-input" 
                     placeholder="Share something with the community... (min 10 chars)"
                     id="postContent"
-                    onkeyup="validatePost()"
+                    onkeyup="validatePostForm()"
                     aria-describedby="contentError"
                 ></textarea>
                 <div id="contentError" class="validation-error">Content must be at least 10 characters long.</div>
@@ -578,17 +766,6 @@ $data = $controller->handleRequest();
                 ><i class="fas fa-paper-plane"></i> Share Post</button>
             </div>
         </div>
-        <?php else: ?>
-        <!-- Message for visitors -->
-        <div style="text-align: center; margin: 2rem 0; background: rgba(255,255,255,0.8); padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-            <i class="fas fa-info-circle" style="font-size: 2rem; color: #3e92cc; margin-bottom: 1rem;"></i>
-            <h3>You're browsing as a visitor</h3>
-            <p>Log in to create posts, comment, and react to content.</p>
-            <a href="login.php" class="btn-post" style="display: inline-block; margin-top: 1rem;">
-                <i class="fas fa-sign-in-alt"></i> Login Now
-            </a>
-        </div>
-        <?php endif; ?>
         
         <div id="posts-container">
             <div class="loader"></div>
@@ -597,10 +774,57 @@ $data = $controller->handleRequest();
 
     <div id="toast" class="toast"></div>
 
+    <!-- Chat interface -->
+    <div class="chat-container">
+        <div class="chat-header">
+            <span>WorldVenture Chat</span>
+            <span class="toggle-chat">▼</span>
+            <div class="chat-notification">0</div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Chat messages will be loaded here -->
+        </div>
+        <div class="chat-input-wrapper">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..." autocomplete="off">
+            <button class="send-btn" id="sendButton" disabled>
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
     <script>
         // DOM loaded
         document.addEventListener('DOMContentLoaded', function() {
             loadPosts();
+            
+            // Initialize validation on page load
+            validatePostForm();
+            
+            // Initialize chat
+            loadChatMessages();
+            
+            // Toggle chat minimization
+            document.querySelector('.toggle-chat').addEventListener('click', function() {
+                document.querySelector('.chat-container').classList.toggle('minimized');
+            });
+            
+            // Enable/disable send button based on input
+            document.getElementById('chatInput').addEventListener('input', function() {
+                document.getElementById('sendButton').disabled = !validateChatMessage(this.value);
+            });
+            
+            // Send message on button click
+            document.getElementById('sendButton').addEventListener('click', sendChatMessage);
+            
+            // Send message on Enter key
+            document.getElementById('chatInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !this.disabled) {
+                    sendChatMessage();
+                }
+            });
+            
+            // Load new messages periodically
+            setInterval(loadChatMessages, 5000);
         });
 
         // Toggle user dropdown menu
@@ -622,216 +846,162 @@ $data = $controller->handleRequest();
             });
         }
 
-        // Enhanced validation function with live feedback
+        // Enhanced validation function now uses our validation.js library
         function validatePost() {
-            const titleInput = document.getElementById('postTitle');
-            const contentInput = document.getElementById('postContent');
-            const postButton = document.getElementById('postButton');
-            const titleError = document.getElementById('titleError');
-            const contentError = document.getElementById('contentError');
-            
-            const title = titleInput.value.trim();
-            const content = contentInput.value.trim();
-            let isValid = true;
-
-            // Title validation with enhanced feedback
-            if (!title) {
-                titleError.textContent = 'Please provide a title for your post.';
-                titleError.style.display = 'block';
-                titleInput.classList.add('error');
-                isValid = false;
-            } else if (title.length < 3) {
-                titleError.textContent = `Title should be at least 3 characters (${3 - title.length} more needed).`;
-                titleError.style.display = 'block';
-                titleInput.classList.add('error');
-                isValid = false;
-            } else {
-                titleError.style.display = 'none';
-                titleInput.classList.remove('error');
-            }
-
-            // Content validation with enhanced feedback
-            if (!content) {
-                contentError.textContent = 'Please write something in your post.';
-                contentError.style.display = 'block';
-                contentInput.classList.add('error');
-                isValid = false;
-            } else if (content.length < 10) {
-                contentError.textContent = `Add ${10 - content.length} more character${content.length === 9 ? '' : 's'} to continue.`;
-                contentError.style.display = 'block';
-                contentInput.classList.add('error');
-                isValid = false;
-            } else {
-                contentError.style.display = 'none';
-                contentInput.classList.remove('error');
-            }
-            
-            // Update button state with visual feedback
-            postButton.disabled = !isValid;
-            
-            // Visual feedback on button
-            if (isValid) {
-                postButton.classList.add('ready');
-                postButton.innerHTML = '<i class="fas fa-paper-plane"></i> Share Post';
-            } else {
-                postButton.classList.remove('ready');
-                postButton.innerHTML = '<i class="fas fa-paper-plane"></i> Share Post';
-            }
-            
-            return isValid;
+            validatePostForm(); // Call our external validation function
         }
 
-        // Enhanced post submission with better feedback
+        // Submit Post - Updated to use validation from validation.js
         async function submitPost() {
-             const titleInput = document.getElementById('postTitle');
-             const contentInput = document.getElementById('postContent');
-             const title = titleInput.value.trim();
-             const content = contentInput.value.trim();
-             
-             // Re-validate before submitting
-             if (!validatePost()) {
-                 showToast('<i class="fas fa-exclamation-circle"></i> Please fix the errors before posting.', true);
-                 return;
-             }
-             
-             // Disable button during submission with loading state
-             const postButton = document.getElementById('postButton');
-             postButton.disabled = true;
-             postButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting...';
-             
-             // Prepare form data for multipart submission (incl. photo)
-             const photoInputEl = document.getElementById('photoInput');
-             if (!photoInputEl) {
-                 console.warn('Photo input element missing, proceeding without photo');
-             }
-             const formData = new FormData();
-             formData.append('ajax', true);
-             formData.append('action', 'create');
-             formData.append('title', title);
-             formData.append('content', content);
-             if (photoInputEl && photoInputEl.files.length > 0) {
-                 formData.append('photo', photoInputEl.files[0]);
-             }
-             // Include geolocation if available
-             const lat = document.getElementById('latitudeInput').value;
-             const lng = document.getElementById('longitudeInput').value;
-             if (lat && lng) {
-                 formData.append('latitude', lat);
-                 formData.append('longitude', lng);
-             }
-             // Debug: log formData entries
-             for (let [key, val] of formData.entries()) {
-                 console.log('formData', key, val instanceof File ? val.name : val);
-             }
-             
-             // Submit with timeout and async/await
-             try {
-                 const controller = new AbortController();
-                 const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
-                 const response = await fetch('blog_backend.php', {
-                     method: 'POST',
-                     headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                     body: formData,
-                     signal: controller.signal
-                 });
-                 clearTimeout(timeoutId);
-                 if (!response.ok) {
-                     const text = await response.text();
-                     throw new Error(`HTTP ${response.status}: ${text}`);
-                 }
-                 const data = await response.json();
-                 if (data.error) {
-                     throw new Error(data.error);
-                 }
-                 // Success: animate and reload posts
-                 const postCreationCard = document.querySelector('.post-creation-card');
-                 postCreationCard.style.backgroundColor = 'rgba(240, 253, 244, 0.9)';
-                 postCreationCard.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.5)';
-                 setTimeout(() => {
+            // Validate the form before submission
+            if (!validatePostForm()) {
+                return;
+            }
+            
+            // Get input values
+            const titleInput = document.getElementById('postTitle');
+            const contentInput = document.getElementById('postContent');
+            const title = titleInput.value.trim();
+            const content = contentInput.value.trim();
+            
+            // Disable button during submission with loading state
+            const postButton = document.getElementById('postButton');
+            postButton.disabled = true;
+            postButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting...';
+            
+            // Prepare form data for multipart submission (incl. photo)
+            const photoInputEl = document.getElementById('photoInput');
+            if (!photoInputEl) {
+                console.warn('Photo input element missing, proceeding without photo');
+            }
+            const formData = new FormData();
+            formData.append('ajax', true);
+            formData.append('action', 'create');
+            formData.append('title', title);
+            formData.append('content', content);
+            if (photoInputEl && photoInputEl.files.length > 0) {
+                formData.append('photo', photoInputEl.files[0]);
+            }
+            // Include geolocation if available
+            const lat = document.getElementById('latitudeInput').value;
+            const lng = document.getElementById('longitudeInput').value;
+            if (lat && lng) {
+                formData.append('latitude', lat);
+                formData.append('longitude', lng);
+            }
+            // Debug: log formData entries
+            for (let [key, val] of formData.entries()) {
+                console.log('formData', key, val instanceof File ? val.name : val);
+            }
+            
+            // Submit with timeout and async/await
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+                const response = await fetch('blog_backend.php', {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    body: formData,
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${text}`);
+                }
+                const data = await response.json();
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                // Success: animate and reload posts
+                const postCreationCard = document.querySelector('.post-creation-card');
+                postCreationCard.style.backgroundColor = 'rgba(240, 253, 244, 0.9)';
+                postCreationCard.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.5)';
+                setTimeout(() => {
                     titleInput.value = '';
                     contentInput.value = '';
                     const latEl = document.getElementById('latitudeInput'); if (latEl) latEl.value = '';
                     const lngEl = document.getElementById('longitudeInput'); if (lngEl) lngEl.value = '';
                     const photoEl = document.getElementById('photoInput'); if (photoEl) photoEl.value = '';
-                     showToast('<i class="fas fa-check-circle"></i> Your post has been published successfully!');
-                     setTimeout(() => {
-                         postCreationCard.style.backgroundColor = '';
-                         postCreationCard.style.boxShadow = '';
-                     }, 800);
-                     loadPosts(true);
-                     validatePost();
-                 }, 500);
-             } catch (err) {
-                 console.error('submitPost error:', err);
-                 const msg = (err.name === 'AbortError') 
-                     ? 'Request timed out. Please try again.' 
-                     : err.message;
-                 showToast(`<i class="fas fa-exclamation-circle"></i> ${msg}`, true);
-             } finally {
-                 // Always reset button state
-                 postButton.disabled = false;
-                 postButton.innerHTML = '<i class="fas fa-paper-plane"></i> Share Post';
-                 validatePost();
-             }
-         }
+                    showToast('<i class="fas fa-check-circle"></i> Your post has been published successfully!');
+                    setTimeout(() => {
+                        postCreationCard.style.backgroundColor = '';
+                        postCreationCard.style.boxShadow = '';
+                    }, 800);
+                    loadPosts(true);
+                    validatePost();
+                }, 500);
+            } catch (err) {
+                console.error('submitPost error:', err);
+                const msg = (err.name === 'AbortError') 
+                    ? 'Request timed out. Please try again.' 
+                    : err.message;
+                showToast(`<i class="fas fa-exclamation-circle"></i> ${msg}`, true);
+            } finally {
+                // Always reset button state
+                postButton.disabled = false;
+                postButton.innerHTML = '<i class="fas fa-paper-plane"></i> Share Post';
+                validatePost();
+            }
+        }
 
-         // Enhanced posts loading with smooth transitions and new post animation
-         function loadPosts(addedNewPost = false) {
-             const container = document.getElementById('posts-container');
-             
-             // Keep existing posts if just added a new one
-             if (!addedNewPost) {
-                 container.innerHTML = '<div class="loader"></div>'; 
-             }
-             
-             fetch('blog_backend.php?action=list', {
-                 headers: { // Add this headers block
-                     'X-Requested-With': 'XMLHttpRequest'
-                 }
-             })
-                 .then(res => {
-                     if (!res.ok) {
-                         // Try to get more info from the response body if it's not JSON
-                         return res.text().then(text => {
-                             throw new Error(`HTTP error! status: ${res.status}, Response: ${text.substring(0, 100)}...`);
-                         });
-                     }
-                     return res.json();
-                 })
-                 .then(data => {
-                     if (data.error) {
-                          throw new Error(data.error);
-                     }
-                     const postsContainer = document.getElementById('posts-container');
-                     container.innerHTML = ''; // Clear loader
-                     
-                     if (!data.posts || data.posts.length === 0) {
-                         container.innerHTML = `
-                             <div class="no-posts-message">
-                                 <i class="fas fa-newspaper" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                                 <h2>No Posts Yet</h2>
-                                 <p>Be the first to share something amazing with the community!</p>
-                             </div>`;
-                         return;
-                     }
-                     
-                     // Create HTML for each post with animation
-                     data.posts.forEach((post, index) => {
-                         const postElement = document.createElement('div');
-                         postElement.className = 'blog-post';
-                         postElement.dataset.id = post.id;
-                         postElement.style.animationDelay = `${index * 0.1}s`;
-                         postElement.style.animation = 'fadeIn 0.5s ease forwards';
-                         
-                         // Check if this is a newly added post
-                         const isNewPost = addedNewPost && index === 0;
-                         if (isNewPost) {
-                             postElement.className = 'blog-post new-post';
-                         }
-                         
-                         const authorInitial = post.author_name ? post.author_name.charAt(0).toUpperCase() : 'U';
-                         
-                         postElement.innerHTML = `
+        // Enhanced posts loading with smooth transitions and new post animation
+        function loadPosts(addedNewPost = false) {
+            const container = document.getElementById('posts-container');
+            
+            // Keep existing posts if just added a new one
+            if (!addedNewPost) {
+                container.innerHTML = '<div class="loader"></div>'; 
+            }
+            
+            fetch('blog_backend.php?action=list', {
+                headers: { // Add this headers block
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(res => {
+                    if (!res.ok) {
+                        // Try to get more info from the response body if it's not JSON
+                        return res.text().then(text => {
+                            throw new Error(`HTTP error! status: ${res.status}, Response: ${text.substring(0, 100)}...`);
+                        });
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                         throw new Error(data.error);
+                    }
+                    const postsContainer = document.getElementById('posts-container');
+                    container.innerHTML = ''; // Clear loader
+                    
+                    if (!data.posts || data.posts.length === 0) {
+                        container.innerHTML = `
+                            <div class="no-posts-message">
+                                <i class="fas fa-newspaper" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                <h2>No Posts Yet</h2>
+                                <p>Be the first to share something amazing with the community!</p>
+                            </div>`;
+                        return;
+                    }
+                    
+                    // Create HTML for each post with animation
+                    data.posts.forEach((post, index) => {
+                        const postElement = document.createElement('div');
+                        postElement.className = 'blog-post';
+                        postElement.dataset.id = post.id;
+                        postElement.style.animationDelay = `${index * 0.1}s`;
+                        postElement.style.animation = 'fadeIn 0.5s ease forwards';
+                        
+                        // Check if this is a newly added post
+                        const isNewPost = addedNewPost && index === 0;
+                        if (isNewPost) {
+                            postElement.className = 'blog-post new-post';
+                        }
+                        
+                        const authorInitial = post.author_name ? post.author_name.charAt(0).toUpperCase() : 'U';
+                        
+                        postElement.innerHTML = `
      <div class="post-author">
          <div class="post-author-avatar">
              ${authorInitial}
@@ -1054,443 +1224,135 @@ $data = $controller->handleRequest();
              });
          }
 
-         // Helper functions
-         function isVisitor() {
-             return <?= json_encode(getUserRole() === 'visitor') ?>;
+         // Enhanced chat functionality
+         function loadChatMessages() {
+             fetch('../controllers/chat_api.php?action=get_messages')
+                 .then(response => response.json())
+                 .then(data => {
+                     if (data.success) {
+                         const chatMessages = document.getElementById('chatMessages');
+                         chatMessages.innerHTML = ''; // Clear existing messages
+                         
+                         data.messages.forEach(message => {
+                             const messageElement = document.createElement('div');
+                             messageElement.className = 'chat-message';
+                             messageElement.id = 'chat-msg-' + message.id;
+                             
+                             // Highlight if it's the current user's message
+                             if (message.user_id == <?= $_SESSION['user_id'] ?? 0 ?>) {
+                                 messageElement.classList.add('mine');
+                             } else {
+                                 messageElement.classList.add('other');
+                             }
+                             
+                             // Add admin styling if applicable
+                             if (message.user_role === 'admin') {
+                                 messageElement.classList.add('admin');
+                             }
+                             
+                             const timestamp = new Date(message.created_at);
+                             const time = timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                             
+                             messageElement.innerHTML = `
+                                 <div class="message-header">
+                                     <span class="message-author">${escapeHtml(message.user_name)}</span>
+                                     ${message.user_role === 'admin' ? '<span class="message-badge admin">Admin</span>' : ''}
+                                     <span class="message-time">${time}</span>
+                                 </div>
+                                 <div class="message-content">${escapeHtml(message.content)}</div>
+                             `;
+                             
+                             chatMessages.appendChild(messageElement);
+                         });
+                         
+                         // Auto-scroll to the bottom of the chat
+                         chatMessages.scrollTop = chatMessages.scrollHeight;
+                     }
+                 })
+                 .catch(error => {
+                     console.error('Error loading chat messages:', error);
+                 });
          }
          
-         function isAdmin() {
-             return <?= json_encode(getUserRole() === 'admin') ?>;
-         }
-         
-         function formatDate(dateString) {
-             const date = new Date(dateString);
-             return date.toLocaleDateString('en-US', {
-                 year: 'numeric',
-                 month: 'short',
-                 day: 'numeric',
-                 hour: '2-digit',
-                 minute: '2-digit'
+         // Send a new chat message
+         function sendChatMessage() {
+             const message = document.getElementById('chatInput').value.trim();
+             
+             if (!validateChatMessage(message)) {
+                 showToast('<i class="fas fa-exclamation-circle"></i> Please enter a message', true);
+                 return;
+             }
+             
+             if (isVisitor()) {
+                 showToast('<i class="fas fa-lock"></i> Please login to participate in the chat', true);
+                 return;
+             }
+             
+             // Send message to server
+             const formData = new FormData();
+             formData.append('action', 'send_message');
+             formData.append('message', message);
+             
+             fetch('../controllers/chat_api.php', {
+                 method: 'POST',
+                 body: formData
+             })
+             .then(response => response.json())
+             .then(data => {
+                 if (data.success) {
+                     // Clear input
+                     document.getElementById('chatInput').value = '';
+                     
+                     // Append the new message
+                     appendChatMessage(data.message);
+                     
+                     // Scroll to bottom
+                     document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+                 } else {
+                     showToast('<i class="fas fa-exclamation-circle"></i> ' + (data.message || 'Error sending message'), true);
+                 }
+             })
+             .catch(error => {
+                 console.error('Error sending chat message:', error);
+                 showToast('<i class="fas fa-exclamation-circle"></i> Error sending message', true);
              });
          }
          
-         function escapeHtml(text) {
-             const div = document.createElement('div');
-             div.textContent = text;
-             return div.innerHTML;
-         }
-         
-         // Enhanced toast notification
-         function showToast(message, isError = false) {
-             const toast = document.getElementById('toast');
-             toast.innerHTML = message;
-             toast.className = isError ? 'toast error show' : 'toast show';
+         // Append a message to the chat
+         function appendChatMessage(data) {
+             const messageElement = document.createElement('div');
+             messageElement.className = 'chat-message';
+             messageElement.id = 'chat-msg-' + data.id;
              
-             setTimeout(() => {
-                 toast.className = 'toast';
-             }, 3000);
-         }
-
-         // Implementing the socket.io + Gemini filtering requirements for discussions
-         const socketIoScript = document.createElement('script');
-         // Load Socket.IO client script directly from our chat server to match origin
-         socketIoScript.src = 'http://localhost:3000/socket.io/socket.io.js';
-         document.head.appendChild(socketIoScript);
-
-         // Add chat container to the blog UI
-         document.addEventListener('DOMContentLoaded', function() {
-             // Add the chat container to the page
-             const chatContainer = document.createElement('div');
-             chatContainer.className = 'chat-container';
-             chatContainer.innerHTML = `
-                 <div class="chat-header">
-                     <h3><i class="fas fa-comments"></i> WorldVenture Community Chat</h3>
-                     <div class="chat-controls">
-                         <button id="toggleChatBtn" class="btn-chat-toggle"><i class="fas fa-chevron-down"></i></button>
-                     </div>
+             // Highlight if it's the current user's message
+             if (data.user_id == <?= $_SESSION['user_id'] ?? 0 ?>) {
+                 messageElement.classList.add('mine');
+             } else {
+                 messageElement.classList.add('other');
+             }
+             
+             // Add admin styling if applicable
+             if (data.user_role === 'admin') {
+                 messageElement.classList.add('admin');
+             }
+             
+             const timestamp = new Date(data.created_at);
+             const time = timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+             
+             messageElement.innerHTML = `
+                 <div class="message-header">
+                     <span class="message-author">${escapeHtml(data.user_name)}</span>
+                     ${data.user_role === 'admin' ? '<span class="message-badge admin">Admin</span>' : ''}
+                     <span class="message-time">${time}</span>
                  </div>
-                 <div class="chat-messages" id="chatMessages">
-                     <div class="welcome-message">
-                         <i class="fas fa-globe-americas"></i>
-                         <p>Welcome to the WorldVenture community chat! Share your travel experiences and connect with other travelers.</p>
-                     </div>
-                 </div>
-                 <div class="chat-input-area">
-                     <textarea 
-                         id="chatInput" 
-                         placeholder="Type your message here..." 
-                         rows="2"
-                         ${isVisitor() ? 'disabled' : ''}
-                     ></textarea>
-                     <button 
-                         id="sendMessageBtn" 
-                         class="btn-send-message"
-                         ${isVisitor() ? 'disabled' : ''}
-                     >
-                         <i class="fas fa-paper-plane"></i>
-                     </button>
-                 </div>
-                 ${isVisitor() ? '<div class="visitor-message-chat">Please <a href="login.php">login</a> to participate in the chat</div>' : ''}
+                 <div class="message-content">${escapeHtml(data.content)}</div>
              `;
-             document.body.appendChild(chatContainer);
+             
+             document.getElementById('chatMessages').appendChild(messageElement);
+         }
 
-             // Socket.IO implementation
-             socketIoScript.onload = function() {
-                 initializeChat();
-             };
-
-             // Initialize chat functionality once Socket.IO script is loaded
-             function initializeChat() {
-                 // Connect directly to chat server via WebSocket to avoid CORS preflight
-                 const socket = io('http://localhost:3000', {
-                     transports: ['websocket'],
-                     withCredentials: true
-                 });
-
-                 const chatMessages = document.getElementById('chatMessages');
-                 const chatInput = document.getElementById('chatInput');
-                 const sendMessageBtn = document.getElementById('sendMessageBtn');
-                 const toggleChatBtn = document.getElementById('toggleChatBtn');
-
-                 // Toggle chat collapse via CSS class
-                 toggleChatBtn.addEventListener('click', function() {
-                     const chatContainer = document.querySelector('.chat-container');
-                     chatContainer.classList.toggle('collapsed');
-                     // Fix for Font Awesome icon toggling
-                     const icon = this.querySelector('i');
-                     if (chatContainer.classList.contains('collapsed')) {
-                         icon.className = 'fas fa-chevron-up';
-                     } else {
-                         icon.className = 'fas fa-chevron-down';
-                     }
-                 });
-
-                 // Send message when button is clicked
-                 sendMessageBtn.addEventListener('click', sendMessage);
-
-                 // Send message when Enter key is pressed (but Shift+Enter for new line)
-                 chatInput.addEventListener('keydown', function(e) {
-                     if (e.key === 'Enter' && !e.shiftKey) {
-                         e.preventDefault();
-                         sendMessage();
-                     }
-                 });
-
-                 function sendMessage() {
-                     const message = chatInput.value.trim();
-                     if (!message) return;
-                     
-                     // Don't allow visitors to send messages
-                     if (isVisitor()) {
-                         showToast('<i class="fas fa-lock"></i> Please login to participate in the chat', true);
-                         return;
-                     }
-
-                     // Send message to server
-                     socket.emit('send_message', {
-                         message,
-                         user: {
-                             id: <?= $_SESSION['user_id'] ?? 0 ?>,
-                             name: '<?= htmlspecialchars($_SESSION['name'] ?? 'Guest') ?>',
-                             role: '<?= getUserRole() ?>'
-                         },
-                         timestamp: new Date().toISOString()
-                     });
-
-                     // Clear input
-                     chatInput.value = '';
-                 }
-
-                 // Handle incoming messages
-                 socket.on('new_message', function(data) {
-                     appendMessage(data);
-                     // Auto-scroll to the latest message
-                     chatMessages.scrollTop = chatMessages.scrollHeight;
-                 });
-
-                 // Handle error messages (for blocked content)
-                 socket.on('message_blocked', function() {
-                     showToast('<i class="fas fa-exclamation-triangle"></i> Your message was blocked due to inappropriate content', true);
-                 });
-
-                 // Handle reconnection
-                 socket.on('reconnect', function() {
-                     appendSystemMessage('Reconnected to chat server');
-                 });
-
-                 // Handle disconnect
-                 socket.on('disconnect', function() {
-                     appendSystemMessage('Disconnected from chat server. Attempting to reconnect...');
-                 });
-
-                 // Append a chat message to the conversation
-                 function appendMessage(data) {
-                     const messageElement = document.createElement('div');
-                     messageElement.className = 'chat-message';
-                     
-                     // Highlight if it's the current user's message
-                     if (data.user.id === <?= $_SESSION['user_id'] ?? 0 ?>) {
-                         messageElement.classList.add('own-message');
-                     }
-                     
-                     // Add admin styling if applicable
-                     if (data.user.role === 'admin') {
-                         messageElement.classList.add('admin-message');
-                     }
-                     
-                     const time = new Date(data.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                     
-                     messageElement.innerHTML = `
-                         <div class="message-header">
-                             <span class="message-author">${escapeHtml(data.user.name)}</span>
-                             ${data.user.role === 'admin' ? '<span class="message-badge admin">Admin</span>' : ''}
-                             <span class="message-time">${time}</span>
-                         </div>
-                         <div class="message-content">${escapeHtml(data.message)}</div>
-                     `;
-                     
-                     chatMessages.appendChild(messageElement);
-                 }
-                 
-                 // Append system messages
-                 function appendSystemMessage(text) {
-                     const messageElement = document.createElement('div');
-                     messageElement.className = 'chat-message system-message';
-                     messageElement.innerHTML = `
-                         <div class="message-content">
-                             <i class="fas fa-info-circle"></i> ${text}
-                         </div>
-                     `;
-                     chatMessages.appendChild(messageElement);
-                 }
-             }
-         });
-
-         // Add chat styles
-         const chatStyles = document.createElement('style');
-         chatStyles.textContent = `
-             .chat-container {
-                 position: fixed;
-                 bottom: 20px;
-                 left: 20px; /* Changed from right to left */
-                 width: 320px;
-                 background: white;
-                 border-radius: 10px;
-                 box-shadow: 0 5px 25px rgba(0,0,0,0.2);
-                 display: flex;
-                 flex-direction: column;
-                 z-index: 1000;
-                 overflow: hidden;
-                 max-height: 500px;
-             }
-             
-             .chat-container.collapsed .chat-messages,
-             .chat-container.collapsed .chat-input-area,
-             .chat-container.collapsed .visitor-message-chat {
-                 display: none;
-             }
-             
-             .chat-header {
-                 background: linear-gradient(135deg, #3e92cc, #0a4c8c);
-                 color: white;
-                 padding: 12px 15px;
-                 display: flex;
-                 justify-content: space-between;
-                 align-items: center;
-                 cursor: pointer;
-             }
-             
-             .chat-header h3 {
-                 margin: 0;
-                 font-size: 1rem;
-                 display: flex;
-                 align-items: center;
-                 gap: 8px;
-             }
-             
-             .btn-chat-toggle {
-                 background: none;
-                 border: none;
-                 color: white;
-                 cursor: pointer;
-                 transition: transform 0.3s;
-             }
-             
-             .btn-chat-toggle:hover {
-                 transform: translateY(2px);
-             }
-             
-             .chat-messages {
-                 padding: 15px;
-                 height: 300px;
-                 overflow-y: auto;
-                 display: flex;
-                 flex-direction: column;
-                 gap: 10px;
-                 background: #f8fafc;
-             }
-             
-             .welcome-message {
-                 background: #e0f2fe;
-                 padding: 12px;
-                 border-radius: 8px;
-                 display: flex;
-                 align-items: center;
-                 gap: 10px;
-                 font-size: 0.9rem;
-                 color: #0c4a6e;
-                 margin-bottom: 10px;
-             }
-             
-             .welcome-message i {
-                 font-size: 1.5rem;
-                 color: #0284c7;
-             }
-             
-             .chat-message {
-                 padding: 10px 12px;
-                 border-radius: 8px;
-                 max-width: 85%;
-                 background: #e2e8f0;
-                 align-self: flex-start;
-                 font-size: 0.9rem;
-                 animation: fadeIn 0.3s ease-out;
-             }
-             
-             .chat-message.own-message {
-                 background: #dbeafe;
-                 align-self: flex-end;
-             }
-             
-             .chat-message.admin-message {
-                 background: #bae6fd;
-             }
-             
-             .chat-message.system-message {
-                 background: #fef3c7;
-                 align-self: center;
-                 color: #92400e;
-                 font-size: 0.8rem;
-                 padding: 6px 10px;
-             }
-             
-             .message-header {
-                 display: flex;
-                 align-items: center;
-                 gap: 6px;
-                 margin-bottom: 5px;
-                 flex-wrap: wrap;
-             }
-             
-             .message-author {
-                 font-weight: 600;
-                 color: #334155;
-             }
-             
-             .message-badge {
-                 font-size: 0.7rem;
-                 padding: 2px 6px;
-                 border-radius: 10px;
-                 color: white;
-                 font-weight: 500;
-             }
-             
-             .message-badge.admin {
-                 background: #0ea5e9;
-             }
-             
-             .message-time {
-                 font-size: 0.75rem;
-                 color: #64748b;
-                 margin-left: auto;
-             }
-             
-             .message-content {
-                 line-height: 1.4;
-                 color: #334155;
-                 overflow-wrap: break-word;
-                 word-break: break-word;
-             }
-             
-             .chat-input-area {
-                 padding: 10px;
-                 border-top: 1px solid #e2e8f0;
-                 display: flex;
-                 gap: 8px;
-                 background: white;
-             }
-             
-             #chatInput {
-                 flex-grow: 1;
-                 padding: 8px 12px;
-                 border: 1px solid #e2e8f0;
-                 border-radius: 20px;
-                 resize: none;
-                 outline: none;
-                 font-family: inherit;
-                 font-size: 0.9rem;
-                 transition: border-color 0.3s;
-             }
-             
-             #chatInput:focus {
-                 border-color: #3e92cc;
-             }
-             
-             #chatInput:disabled {
-                 background: #f1f5f9;
-                 cursor: not-allowed;
-             }
-             
-             .btn-send-message {
-                 width: 36px;
-                 height: 36px;
-                 background: linear-gradient(135deg, #3e92cc, #0a4c8c);
-                 color: white;
-                 border: none;
-                 border-radius: 50%;
-                 display: flex;
-                 align-items: center;
-                 justify-content: center;
-                 cursor: pointer;
-                 transition: all 0.3s;
-             }
-             
-             .btn-send-message:hover {
-                 transform: translateY(-2px);
-                 box-shadow: 0 2px 8px rgba(10, 76, 140, 0.3);
-             }
-             
-             .btn-send-message:disabled {
-                 background: #cbd5e1;
-                 cursor: not-allowed;
-                 transform: none;
-                 box-shadow: none;
-             }
-             
-             .visitor-message-chat {
-                 background: #f1f5f9;
-                 color: #64748b;
-                 padding: 8px;
-                 text-align: center;
-                 font-size: 0.85rem;
-                 border-top: 1px solid #e2e8f0;
-             }
-             
-             .visitor-message-chat a {
-                 color: #3e92cc;
-                 text-decoration: none;
-                 font-weight: 600;
-             }
-             
-             @keyframes fadeIn {
-                 from { opacity: 0; transform: translateY(10px); }
-                 to { opacity: 1; transform: translateY(0); }
-             }
-         `;
-         document.head.appendChild(chatStyles);
-
-         // Photo dialog and handler
-         function openPhotoDialog() {
+        // Photo dialog and handler
+        function openPhotoDialog() {
              const input = document.getElementById('photoInput');
              if (!input) {
                  console.warn('Photo input element not found');

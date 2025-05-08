@@ -1,28 +1,74 @@
 <?php
 class Comment {
     private $id;
-    private $post_id;
+    private $postId;
     private $content;
-    private $user_id;
-    private $created_at;
+    private $userId;
+    private $createdAt;
+    private $authorName;
     private $reactions;
-    private $author_name;
-
-    // Getters
-    public function getId(): ?int { return $this->id; }
-    public function getPostId(): ?int { return $this->post_id; }
-    public function getContent(): ?string { return $this->content; }
-    public function getUserId(): ?int { return $this->user_id; }
-    public function getCreatedAt(): ?string { return $this->created_at; }
-    public function getReactions(): ?int { return $this->reactions; }
-    public function getAuthorName(): ?string { return $this->author_name; }
-
-    // Setters
-    public function setId(int $id): void { $this->id = $id; }
-    public function setPostId(int $post_id): void { $this->post_id = $post_id; }
-    public function setContent(string $content): void { $this->content = $content; }
-    public function setUserId(int $user_id): void { $this->user_id = $user_id; }
-    public function setCreatedAt(string $created_at): void { $this->created_at = $created_at; }
-    public function setReactions(int $reactions): void { $this->reactions = $reactions; }
-    public function setAuthorName(?string $author_name): void { $this->author_name = $author_name; }
+    
+    // Getters and Setters
+    public function getId() {
+        return $this->id;
+    }
+    
+    public function setId($id) {
+        $this->id = $id;
+        return $this;
+    }
+    
+    public function getPostId() {
+        return $this->postId;
+    }
+    
+    public function setPostId($postId) {
+        $this->postId = $postId;
+        return $this;
+    }
+    
+    public function getContent() {
+        return $this->content;
+    }
+    
+    public function setContent($content) {
+        $this->content = $content;
+        return $this;
+    }
+    
+    public function getUserId() {
+        return $this->userId;
+    }
+    
+    public function setUserId($userId) {
+        $this->userId = $userId;
+        return $this;
+    }
+    
+    public function getCreatedAt() {
+        return $this->createdAt;
+    }
+    
+    public function setCreatedAt($createdAt) {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+    
+    public function getAuthorName() {
+        return $this->authorName;
+    }
+    
+    public function setAuthorName($authorName) {
+        $this->authorName = $authorName;
+        return $this;
+    }
+    
+    public function getReactions() {
+        return $this->reactions;
+    }
+    
+    public function setReactions($reactions) {
+        $this->reactions = $reactions;
+        return $this;
+    }
 }

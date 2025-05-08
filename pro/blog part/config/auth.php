@@ -95,3 +95,19 @@ function getUserRole() {
 function getUserId() {
     return $_SESSION['user_id'] ?? 0;
 }
+
+// Check if user is a visitor (not logged in or explicitly set as visitor)
+function isVisitor() {
+    if (!isset($_SESSION['role']) || $_SESSION['role'] === 'visitor') {
+        return true;
+    }
+    if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+        return true;
+    }
+    return false;
+}
+
+// Check if user is an admin
+function isAdmin() {
+    return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+}

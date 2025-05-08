@@ -28,11 +28,11 @@ if (!isset($_SESSION['role']) && (empty($_SESSION['logged_in']) || $_SESSION['lo
     $_SESSION['user_id'] = 0; // Default visitor ID
 }
 
-// Base URL
+// Base URL - updated to handle spaces in folder names
 define('BASE_URL', '/web.pro/inst/pro/pro/');
 
-// Path constants
-define('ROOT_PATH', $_SERVER['DOCUMENT_ROOT'] . BASE_URL);
+// Path constants - fix path handling for spaces in folder names
+define('ROOT_PATH', str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT'] . BASE_URL));
 define('BLOG_PATH', ROOT_PATH . 'blog part/');
 
 // Upload settings

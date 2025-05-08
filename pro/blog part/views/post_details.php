@@ -32,18 +32,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comment'])) {
         $commentError = 'You must be logged in to add a comment.';
     } else {
         $comment = trim($_POST['comment']);
+        
+        // Basic validation
         if (empty($comment)) {
             $commentError = 'Comment cannot be empty.';
-        } elseif (strlen($comment) < 3) {
+        } else if (strlen($comment) < 3) {
             $commentError = 'Comment must be at least 3 characters long.';
         } else {
             try {
+                // Add the comment
                 $newCommentId = $controller->addComment($postId, $comment);
                 $commentSuccess = true;
-                // Reload comments after adding a new one
-                $comments = $controller->getComments($postId);
-                // Clear the form data
-                $_POST['comment'] = '';
+                
+                // Redirect to avoid form resubmission
+                header("Location: post_details.php?id=$postId&comment_success=true#comment-$newCommentId");
+                exit;
             } catch (Exception $e) {
                 $commentError = $e->getMessage();
             }
@@ -62,201 +65,231 @@ $showSuccessMessage = isset($_GET['comment_success']) && $_GET['comment_success'
     <title><?= htmlspecialchars($post['title']) ?> - WorldVenture</title>
     <link rel="stylesheet" href="../../main_front/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/validation.js"></script>
     <style>
-        .post-container {
+        /* Main styling */
+        body {
+            background: url('../../main_front/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+        
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: rgba(255, 255, 255, 0.85);  /* Semi-transparent white overlay */
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        .container {
             max-width: 900px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            height: 60px;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #3e92cc;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: rgba(62, 146, 204, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .back-link:hover {
+            background: rgba(62, 146, 204, 0.2);
+            transform: translateX(-3px);
+        }
+        
+        /* Post styling */
+        .post-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
         }
         
         .post-header {
-            background: rgba(255,255,255,0.95);
             padding: 2rem;
-            border-radius: 12px 12px 0 0;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            border-bottom: none;
+            background: linear-gradient(135deg, #3e92cc, #0a4c8c);
+            color: white;
         }
         
         .post-title {
-            font-size: 2.2rem;
-            color: #0b2447;
+            font-size: 2.4rem;
             margin-bottom: 1rem;
+            line-height: 1.2;
         }
         
         .post-meta {
             display: flex;
             justify-content: space-between;
-            color: #64748b;
+            align-items: center;
             font-size: 0.9rem;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 1rem;
+            opacity: 0.9;
         }
         
-        .post-body {
-            background: rgba(255,255,255,0.95);
-            padding: 2rem;
-            border-radius: 0 0 12px 12px;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            border-top: none;
-            line-height: 1.8;
-            color: #334155;
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .author-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: white;
+            color: #0a4c8c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
         }
         
         .post-content {
+            padding: 2rem;
             font-size: 1.1rem;
             line-height: 1.8;
         }
         
-        .post-actions {
+        .post-image {
+            width: 100%;
+            max-height: 500px;
+            object-fit: cover;
+            margin: 1rem 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Location map styling */
+        .location-section {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+        
+        .map-container {
+            width: 100%;
+            height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Reactions styling */
+        .reactions-section {
+            padding: 1rem 2rem;
+            border-top: 1px solid #e2e8f0;
             display: flex;
             justify-content: space-between;
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid #e2e8f0;
+            align-items: center;
         }
         
         .reaction-btn {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.6rem 1.2rem;
+            padding: 0.5rem 1rem;
             border: none;
             background: #f1f5f9;
             border-radius: 20px;
             cursor: pointer;
             color: #64748b;
             font-weight: 500;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
         
         .reaction-btn:hover, .reaction-btn.active {
             background: #e2e8f0;
             color: #0b2447;
-            transform: translateY(-2px);
-        }
-        
-        .reaction-btn.active {
-            background: #dbeafe;
-            color: #3b82f6;
         }
         
         .reaction-btn i {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         
-        .comments-section {
-            background: rgba(255,255,255,0.9);
-            padding: 2rem;
+        /* Comments styling */
+        .comments-container {
+            background: white;
             border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
             margin-bottom: 2rem;
-            border: 1px solid rgba(226, 232, 240, 0.8);
         }
         
         .comments-header {
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #e2e8f0;
         }
         
-        .comments-header h2 {
+        .comments-title {
+            font-size: 1.4rem;
             color: #0b2447;
-            font-size: 1.5rem;
-            margin: 0;
-        }
-        
-        .comment-count {
-            background: #e2e8f0;
-            color: #64748b;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-        
-        .comment-form {
-            margin-bottom: 2rem;
-        }
-        
-        .comment-input {
-            width: 100%;
-            padding: 1rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            resize: vertical;
-            min-height: 100px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        
-        .comment-input:focus {
-            border-color: #3e92cc;
-            box-shadow: 0 0 0 3px rgba(62, 146, 204, 0.2);
-            outline: none;
-        }
-        
-        .comment-form-actions {
-            display: flex;
-            justify-content: flex-end;
-        }
-        
-        .submit-comment {
-            background: linear-gradient(135deg, #3e92cc, #0a4c8c);
-            color: white;
-            border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
         
-        .submit-comment:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(62, 146, 204, 0.4);
+        .comments-count {
+            background: #e0f2fe;
+            color: #0ea5e9;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
         
-        .visitor-message {
-            text-align: center;
+        .comments-list {
             padding: 1rem;
-            background: #f1f5f9;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            color: #64748b;
-        }
-        
-        .visitor-message a {
-            color: #3e92cc;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s;
-        }
-        
-        .visitor-message a:hover {
-            color: #0a4c8c;
-            text-decoration: underline;
-        }
-        
-        .comment-list {
-            margin-top: 1.5rem;
         }
         
         .comment {
-            border-bottom: 1px solid #e2e8f0;
-            padding: 1.5rem 0;
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        .comment:last-child {
-            border-bottom: none;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 10px;
+            margin-bottom: 1rem;
         }
         
         .comment-header {
@@ -266,71 +299,126 @@ $showSuccessMessage = isset($_GET['comment_success']) && $_GET['comment_success'
         }
         
         .comment-author {
-            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
             color: #0b2447;
-        }
-        
-        .comment-role {
-            display: inline-block;
-            font-size: 0.75rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 20px;
-            margin-left: 0.5rem;
-            color: white;
-        }
-        
-        .comment-role.admin {
-            background: #0ea5e9;
-        }
-        
-        .comment-role.user {
-            background: #10b981;
         }
         
         .comment-date {
-            color: #94a3b8;
             font-size: 0.85rem;
+            color: #64748b;
         }
         
         .comment-content {
-            line-height: 1.6;
             color: #334155;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
         }
         
-        .comment-actions {
+        .comment-reactions {
             display: flex;
             gap: 1rem;
+            margin-top: 0.5rem;
         }
         
-        .comment-reaction {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.9rem;
-            color: #64748b;
-            cursor: pointer;
-            padding: 0.3rem 0.6rem;
-            border-radius: 20px;
-            background: transparent;
-            border: none;
+        .comment-form {
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .comment-input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+            font-size: 0.95rem;
             transition: all 0.2s;
         }
         
-        .comment-reaction:hover, .comment-reaction.active {
-            background: #f1f5f9;
-            color: #0b2447;
+        .comment-input:focus {
+            border-color: #3e92cc;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(62, 146, 204, 0.2);
         }
         
-        .comment-reaction.active {
-            color: #3b82f6;
+        .submit-comment {
+            background: linear-gradient(135deg, #3e92cc, #0a4c8c);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
-        .new-comment {
-            animation: highlightNew 2s ease;
+        .submit-comment:hover {
+            background: linear-gradient(135deg, #0073e6, #0088b3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(62, 146, 204, 0.4);
         }
         
-        .toast {
+        .login-prompt {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            color: #64748b;
+        }
+        
+        .login-prompt a {
+            color: #3e92cc;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .login-prompt a:hover {
+            color: #0a4c8c;
+            text-decoration: underline;
+        }
+        
+        .success-message {
+            background: #dcfce7;
+            color: #10b981;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .error-message {
+            background: #fee2e2;
+            color: #ef4444;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            animation: fadeIn 0.5s;
+        }
+        
+        #toast {
             position: fixed;
             bottom: 25px;
             right: 25px;
@@ -348,375 +436,432 @@ $showSuccessMessage = isset($_GET['comment_success']) && $_GET['comment_success'
             font-weight: 500;
         }
         
-        .toast.show {
+        #toast.show {
             transform: translateY(0);
         }
         
-        .toast.error {
+        #toast.error {
             background: #ef4444;
-        }
-        
-        .toast i {
-            font-size: 1.2rem;
-        }
-        
-        .error-message {
-            color: #ef4444;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
-            animation: fadeIn 0.3s ease-in;
-        }
-        
-        .back-to-blog {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.7rem 1.4rem;
-            background: rgba(255,255,255,0.85);
-            border-radius: 20px;
-            color: #334155;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s;
-            margin-bottom: 1rem;
-        }
-        
-        .back-to-blog:hover {
-            background: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        .success-message {
-            background: #dcfce7;
-            color: #10b981;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes highlightNew {
-            0% { background-color: rgba(224, 242, 254, 0.6); }
-            100% { background-color: transparent; }
         }
     </style>
 </head>
-<body>
+<body data-role="<?= getUserRole() ?>">
     <div class="background-image"></div>
     <div class="overlay"></div>
     
     <header>
-        <img src="../../main_front/logo.png" alt="WorldVenture Logo" class="logo">
+        <a href="blog_frontend.php">
+            <img src="../../main_front/logo.png" alt="WorldVenture Logo" class="logo">
+        </a>
         <div>
             <?php if (isLoggedIn()): ?>
-                <div class="user-menu">
-                    <div class="user-avatar" onclick="toggleUserMenu()">
-                        <i class="fas fa-user-circle"></i>
-                        <span><?= htmlspecialchars($_SESSION['name'] ?? 'User') ?></span>
-                        <span class="user-badge <?= getUserRole() ?>"><?= ucfirst(getUserRole()) ?></span>
-                    </div>
-                    <div class="user-dropdown" id="userDropdown">
-                        <div class="dropdown-header">
-                            Account Options
-                        </div>
-                        <?php if(getUserRole() === 'admin'): ?>
-                            <a href="blog_backend.php">
-                                <i class="fas fa-cog"></i> Admin Dashboard
-                            </a>
-                        <?php endif; ?>
-                        <a href="blog_frontend.php">
-                            <i class="fas fa-home"></i> Blog Home
-                        </a>
-                        <hr>
-                        <a href="../config/logout.php">
-                            <i class="fas fa-sign-out-alt"></i> Log Out
-                        </a>
-                    </div>
-                </div>
+                <span style="margin-right: 1rem; font-weight: 500;">
+                    <?= htmlspecialchars($_SESSION['name'] ?? 'User') ?> 
+                    <span class="badge <?= getUserRole() ?>"><?= ucfirst(getUserRole()) ?></span>
+                </span>
+                <a href="../config/logout.php" style="color: #ef4444; text-decoration: none;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
             <?php else: ?>
-                <a href="login.php" class="login-btn" style="margin-right: 10px;"><i class="fas fa-sign-in-alt"></i> Login</a>
-                <a href="../../main_front/index.php" class="login-btn">Return to Home</a>
+                <a href="login.php" style="color: #3e92cc; text-decoration: none; margin-right: 1rem;">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="../../main_front/index.html" style="color: #64748b; text-decoration: none;">
+                    <i class="fas fa-home"></i> Home
+                </a>
             <?php endif; ?>
         </div>
     </header>
-
-    <div class="post-container">
-        <a href="blog_frontend.php" class="back-to-blog">
-            <i class="fas fa-arrow-left"></i> Back to Blog
+    
+    <div class="container">
+        <a href="blog_frontend.php" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to All Posts
         </a>
         
-        <div class="post-header">
-            <h1 class="post-title"><?= htmlspecialchars($post['title']) ?></h1>
-            <div class="post-meta">
-                <div>
-                    <i class="fas fa-user"></i> <?= htmlspecialchars($post['author_name'] ?? 'Author') ?>
-                    <?php if ($post['author_id'] == 1): ?>
-                        <span class="comment-role admin">Admin</span>
-                    <?php endif; ?>
+        <div class="post-container">
+            <div class="post-header">
+                <h1 class="post-title"><?= htmlspecialchars($post['title']) ?></h1>
+                <div class="post-meta">
+                    <div class="post-author">
+                        <div class="author-avatar">
+                            <?= strtoupper(substr($post['author_name'] ?? 'U', 0, 1)) ?>
+                        </div>
+                        <div>
+                            <div><?= htmlspecialchars($post['author_name'] ?? 'Unknown User') ?></div>
+                            <div><?= date('F j, Y', strtotime($post['created_at'])) ?></div>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <i class="fas fa-calendar-alt"></i> <?= date('F j, Y', strtotime($post['created_at'])) ?>
-                </div>
-            </div>
-        </div>
-        
-        <div class="post-body">
-            <div class="post-content">
-                <?= nl2br(htmlspecialchars($post['content'])) ?>
             </div>
             
-            <div class="post-actions">
-                <button 
-                    id="reactionBtn" 
-                    class="reaction-btn <?= isLoggedIn() && $controller->hasUserReacted($post['id'], $_SESSION['user_id']) ? 'active' : '' ?>"
-                    <?= !isLoggedIn() ? 'disabled' : '' ?>
-                    onclick="handleReaction(<?= $post['id'] ?>)"
-                >
+            <div class="post-content">
+                <?= nl2br(htmlspecialchars($post['content'])) ?>
+                
+                <?php if (!empty($post['photo_path'])): ?>
+                    <img src="<?= htmlspecialchars($post['photo_path']) ?>" alt="Post Image" class="post-image">
+                <?php endif; ?>
+                
+                <?php if (!empty($post['latitude']) && !empty($post['longitude'])): ?>
+                    <div class="location-section">
+                        <h3><i class="fas fa-map-marker-alt"></i> Location</h3>
+                        <div class="map-container" id="map"></div>
+                    </div>
+                <?php endif; ?>
+            </div>
+            
+            <div class="reactions-section">
+                <button class="reaction-btn <?= $controller->hasUserReacted($post['id'], $_SESSION['user_id'] ?? 0, 'post') ? 'active' : '' ?>" id="reactionBtn" onclick="handleReaction()">
                     <i class="fas fa-thumbs-up"></i>
-                    <span id="reactionCount"><?= $post['reactions'] ?></span> 
-                    <?= $post['reactions'] == 1 ? 'Like' : 'Likes' ?>
+                    <span id="reactionCount"><?= $post['reactions'] ?? 0 ?></span> Like<?= ($post['reactions'] !== 1) ? 's' : '' ?>
                 </button>
                 
                 <div>
-                    <button class="reaction-btn" onclick="scrollToComments()">
-                        <i class="fas fa-comments"></i>
-                        <?= count($comments) ?> 
-                        <?= count($comments) == 1 ? 'Comment' : 'Comments' ?>
-                    </button>
+                    <a href="#comments" class="reaction-btn">
+                        <i class="fas fa-comment"></i> <?= count($comments) ?> Comment<?= (count($comments) !== 1) ? 's' : '' ?>
+                    </a>
                 </div>
             </div>
         </div>
         
-        <div class="comments-section" id="comments">
+        <div class="comments-container" id="comments">
             <div class="comments-header">
-                <h2><i class="fas fa-comments"></i> Comments</h2>
-                <span class="comment-count"><?= count($comments) ?> <?= count($comments) == 1 ? 'Comment' : 'Comments' ?></span>
+                <h2 class="comments-title">
+                    <i class="fas fa-comments"></i> Comments
+                    <span class="comments-count"><?= count($comments) ?></span>
+                </h2>
             </div>
             
-            <?php if ($commentSuccess || $showSuccessMessage): ?>
-            <div class="success-message">
-                <i class="fas fa-check-circle"></i> Your comment has been added successfully!
-            </div>
+            <?php if ($showSuccessMessage): ?>
+                <div class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    Your comment has been added successfully!
+                </div>
             <?php endif; ?>
             
-            <?php if (getUserRole() === 'visitor'): ?>
-            <div class="visitor-message">
-                <i class="fas fa-info-circle"></i> You need to <a href="login.php">log in</a> to leave a comment.
-            </div>
-            <?php else: ?>
-            <form class="comment-form" method="POST" action="">
-                <textarea 
-                    class="comment-input" 
-                    name="comment" 
-                    placeholder="Write your comment here..."
-                    required
-                    minlength="3"
-                ><?= htmlspecialchars($_POST['comment'] ?? '') ?></textarea>
-                
-                <?php if ($commentError): ?>
+            <?php if ($commentError): ?>
                 <div class="error-message">
-                    <i class="fas fa-exclamation-circle"></i> <?= $commentError ?>
+                    <i class="fas fa-exclamation-circle"></i>
+                    <?= htmlspecialchars($commentError) ?>
                 </div>
-                <?php endif; ?>
-                
-                <div class="comment-form-actions">
-                    <button type="submit" class="submit-comment">
-                        <i class="fas fa-paper-plane"></i> Post Comment
-                    </button>
-                </div>
-            </form>
             <?php endif; ?>
             
-            <div class="comment-list">
+            <div class="comments-list">
                 <?php if (count($comments) > 0): ?>
                     <?php foreach ($comments as $comment): ?>
-                    <div class="comment <?= $commentSuccess && isset($newCommentId) && $comment['id'] == $newCommentId ? 'new-comment' : '' ?>">
-                        <div class="comment-header">
-                            <div class="comment-author">
-                                <?= htmlspecialchars($comment['author_name'] ?? 'Anonymous') ?>
-                                <?php if ($comment['user_id'] == 1): ?>
-                                    <span class="comment-role admin">Admin</span>
-                                <?php elseif ($comment['user_id'] != 0): ?>
-                                    <span class="comment-role user">User</span>
-                                <?php endif; ?>
+                        <div class="comment" id="comment-<?= $comment['id'] ?>">
+                            <div class="comment-header">
+                                <div class="comment-author">
+                                    <div class="author-avatar">
+                                        <?= strtoupper(substr($comment['author_name'] ?? 'U', 0, 1)) ?>
+                                    </div>
+                                    <div><?= htmlspecialchars($comment['author_name'] ?? 'Unknown User') ?></div>
+                                </div>
+                                <div class="comment-date"><?= date('F j, Y, g:i a', strtotime($comment['created_at'])) ?></div>
                             </div>
-                            <div class="comment-date">
-                                <?= date('M j, Y g:i A', strtotime($comment['created_at'])) ?>
+                            <div class="comment-content">
+                                <?= nl2br(htmlspecialchars($comment['content'])) ?>
+                            </div>
+                            <div class="comment-reactions">
+                                <button class="reaction-btn <?= $controller->hasUserReacted($comment['id'], $_SESSION['user_id'] ?? 0, 'comment') ? 'active' : '' ?>" onclick="handleCommentReaction(<?= $comment['id'] ?>)">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    <span id="comment-reaction-<?= $comment['id'] ?>"><?= $comment['reactions'] ?? 0 ?></span>
+                                </button>
                             </div>
                         </div>
-                        <div class="comment-content">
-                            <?= nl2br(htmlspecialchars($comment['content'])) ?>
-                        </div>
-                        <div class="comment-actions">
-                            <button 
-                                class="comment-reaction <?= isLoggedIn() && $controller->hasUserReacted($comment['id'], $_SESSION['user_id'], 'comment') ? 'active' : '' ?>"
-                                <?= !isLoggedIn() ? 'disabled' : '' ?>
-                                onclick="handleCommentReaction(<?= $comment['id'] ?>)"
-                            >
-                                <i class="fas fa-thumbs-up"></i>
-                                <span id="comment-reaction-<?= $comment['id'] ?>"><?= $comment['reactions'] ?></span>
-                            </button>
-                        </div>
-                    </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <div style="text-align: center; padding: 2rem 0; color: #64748b;">
+                    <div style="text-align: center; padding: 2rem; color: #64748b;">
                         <i class="fas fa-comment-slash" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-                        <p>No comments yet. Be the first to comment!</p>
+                        <h3>No Comments Yet</h3>
+                        <p>Be the first to share your thoughts!</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+            
+            <div class="comment-form">
+                <?php if (isLoggedIn()): ?>
+                    <form method="POST" action="" id="commentForm">
+                        <textarea 
+                            name="comment" 
+                            placeholder="Write your comment..." 
+                            class="comment-input"
+                            onkeyup="validateCommentForm()"
+                            required
+                        ></textarea>
+                        <div class="error-message" style="display: none;"></div>
+                        <button type="submit" class="submit-comment" disabled>
+                            <i class="fas fa-paper-plane"></i> Post Comment
+                        </button>
+                    </form>
+                <?php else: ?>
+                    <div class="login-prompt">
+                        <p><i class="fas fa-lock"></i> Please <a href="login.php">log in</a> to leave a comment.</p>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
     </div>
-
-    <div id="toast" class="toast"></div>
-
+    
+    <div id="toast"></div>
+    
     <script>
-        // Toggle user dropdown menu
-        function toggleUserMenu() {
-            const dropdown = document.getElementById('userDropdown');
-            dropdown.classList.toggle('active');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize map if coordinates are available
+            <?php if (!empty($post['latitude']) && !empty($post['longitude'])): ?>
+            initMap(<?= $post['latitude'] ?>, <?= $post['longitude'] ?>);
+            <?php endif; ?>
             
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(event) {
-                const userMenu = document.querySelector('.user-menu');
-                const clickedOutside = !userMenu.contains(event.target);
+            // Set up form validation
+            const commentForm = document.getElementById('commentForm');
+            if (commentForm) {
+                const commentInput = document.querySelector('.comment-input');
+                const submitButton = document.querySelector('.submit-comment');
+                const errorElement = document.querySelector('.error-message');
                 
-                if (clickedOutside && dropdown.classList.contains('active')) {
-                    dropdown.classList.remove('active');
+                commentInput.addEventListener('input', function() {
+                    validateAndUpdateButton();
+                });
+                
+                commentForm.addEventListener('submit', function(event) {
+                    if (!validateCommentForm()) {
+                        event.preventDefault();
+                    }
+                });
+                
+                function validateAndUpdateButton() {
+                    const isValid = validateCommentForm();
+                    submitButton.disabled = !isValid;
+                }
+            }
+            
+            // If there's a hash in the URL, scroll to it
+            if (window.location.hash) {
+                setTimeout(function() {
+                    const element = document.querySelector(window.location.hash);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        element.style.animation = 'highlight 2s ease';
+                    }
+                }, 500);
+            }
+        });
+        
+        // Initialize Google Maps
+        function initMap(lat, lng) {
+            const mapDiv = document.getElementById('map');
+            
+            // Check if Google Maps API is loaded
+            if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+                loadGoogleMapsScript(() => {
+                    createMap(lat, lng);
+                });
+            } else {
+                createMap(lat, lng);
+            }
+        }
+        
+        function createMap(lat, lng) {
+            const mapOptions = {
+                zoom: 14,
+                center: { lat: parseFloat(lat), lng: parseFloat(lng) },
+                styles: [
+                    {
+                        "featureType": "water",
+                        "elementType": "geometry",
+                        "stylers": [{ "color": "#e9e9e9" }, { "lightness": 17 }]
+                    },
+                    {
+                        "featureType": "landscape",
+                        "elementType": "geometry",
+                        "stylers": [{ "color": "#f5f5f5" }, { "lightness": 20 }]
+                    },
+                    {
+                        "featureType": "road.highway",
+                        "elementType": "geometry.fill",
+                        "stylers": [{ "color": "#ffffff" }, { "lightness": 17 }]
+                    },
+                    {
+                        "featureType": "road.highway",
+                        "elementType": "geometry.stroke",
+                        "stylers": [{ "color": "#ffffff" }, { "lightness": 29 }, { "weight": 0.2 }]
+                    },
+                    {
+                        "featureType": "road.arterial",
+                        "elementType": "geometry",
+                        "stylers": [{ "color": "#ffffff" }, { "lightness": 18 }]
+                    },
+                    {
+                        "featureType": "road.local",
+                        "elementType": "geometry",
+                        "stylers": [{ "color": "#ffffff" }, { "lightness": 16 }]
+                    },
+                    {
+                        "featureType": "poi",
+                        "elementType": "geometry",
+                        "stylers": [{ "color": "#f5f5f5" }, { "lightness": 21 }]
+                    },
+                    {
+                        "featureType": "poi.park",
+                        "elementType": "geometry",
+                        "stylers": [{ "color": "#dedede" }, { "lightness": 21 }]
+                    },
+                    {
+                        "elementType": "labels.text.stroke",
+                        "stylers": [{ "visibility": "on" }, { "color": "#ffffff" }, { "lightness": 16 }]
+                    },
+                    {
+                        "elementType": "labels.text.fill",
+                        "stylers": [{ "saturation": 36 }, { "color": "#333333" }, { "lightness": 40 }]
+                    },
+                    {
+                        "elementType": "labels.icon",
+                        "stylers": [{ "visibility": "off" }]
+                    },
+                    {
+                        "featureType": "transit",
+                        "elementType": "geometry",
+                        "stylers": [{ "color": "#f2f2f2" }, { "lightness": 19 }]
+                    },
+                    {
+                        "featureType": "administrative",
+                        "elementType": "geometry.fill",
+                        "stylers": [{ "color": "#fefefe" }, { "lightness": 20 }]
+                    },
+                    {
+                        "featureType": "administrative",
+                        "elementType": "geometry.stroke",
+                        "stylers": [{ "color": "#fefefe" }, { "lightness": 17 }, { "weight": 1.2 }]
+                    }
+                ]
+            };
+            
+            const map = new google.maps.Map(document.getElementById('map'), mapOptions);
+            
+            const marker = new google.maps.Marker({
+                position: { lat: parseFloat(lat), lng: parseFloat(lng) },
+                map: map,
+                title: '<?= addslashes($post['title']) ?>',
+                animation: google.maps.Animation.DROP,
+                icon: {
+                    url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+                    scaledSize: new google.maps.Size(40, 40)
                 }
             });
         }
         
-        // Handle post reaction
-        function handleReaction(postId) {
-            <?php if (getUserRole() === 'visitor'): ?>
-            showToast('<i class="fas fa-lock"></i> Please login to react to posts', true);
-            return;
-            <?php endif; ?>
+        function loadGoogleMapsScript(callback) {
+            const script = document.createElement('script');
+            script.src = 'https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap';
+            script.defer = true;
+            script.async = true;
+            document.body.appendChild(script);
+            script.onload = callback;
+        }
+        
+        // Handle post reactions
+        function handleReaction() {
+            if (isVisitor()) {
+                showToast('Please login to like this post', true);
+                return;
+            }
             
+            const postId = <?= $post['id'] ?>;
             const reactionBtn = document.getElementById('reactionBtn');
-            const countElement = document.getElementById('reactionCount');
+            const reactionCount = document.getElementById('reactionCount');
             
-            // Optimistic UI update
+            // Add visual feedback immediately
             reactionBtn.classList.toggle('active');
+            reactionBtn.disabled = true;
             
-            fetch('blog_backend.php', {
+            fetch('../controllers/controller.php', {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({
-                    ajax: true,
                     action: 'react',
                     postId: postId
                 })
             })
-            .then(res => res.json())
+            .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    showToast(`<i class="fas fa-exclamation-circle"></i> ${data.error}`, true);
-                    // Revert UI on error
-                    reactionBtn.classList.toggle('active');
+                    showToast(data.error, true);
+                    reactionBtn.classList.toggle('active'); // Revert on error
                     return;
                 }
                 
-                if (data.success) {
-                    countElement.textContent = data.count;
-                    showToast('<i class="fas fa-check-circle"></i> Your reaction has been recorded!');
-                }
+                reactionCount.textContent = data.count;
+                reactionBtn.classList.toggle('active', data.hasReacted);
+                showToast('Your reaction has been recorded!');
             })
-            .catch(err => {
-                console.error(err);
-                showToast('<i class="fas fa-times-circle"></i> Error updating reaction', true);
-                // Revert UI on error
-                reactionBtn.classList.toggle('active');
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error updating reaction', true);
+                reactionBtn.classList.toggle('active'); // Revert on error
+            })
+            .finally(() => {
+                reactionBtn.disabled = false;
             });
         }
         
-        // Handle comment reaction
+        // Handle comment reactions
         function handleCommentReaction(commentId) {
-            <?php if (getUserRole() === 'visitor'): ?>
-            showToast('<i class="fas fa-lock"></i> Please login to react to comments', true);
-            return;
-            <?php endif; ?>
+            if (isVisitor()) {
+                showToast('Please login to like this comment', true);
+                return;
+            }
             
             const reactionBtn = event.currentTarget;
-            const countElement = document.getElementById(`comment-reaction-${commentId}`);
+            const reactionCount = document.getElementById(`comment-reaction-${commentId}`);
             
-            // Optimistic UI update
+            // Add visual feedback immediately
             reactionBtn.classList.toggle('active');
+            reactionBtn.disabled = true;
             
-            fetch('blog_backend.php', {
+            fetch('../controllers/controller.php', {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({
-                    ajax: true,
                     action: 'reactToComment',
                     commentId: commentId
                 })
             })
-            .then(res => res.json())
+            .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    showToast(`<i class="fas fa-exclamation-circle"></i> ${data.error}`, true);
-                    // Revert UI on error
-                    reactionBtn.classList.toggle('active');
+                    showToast(data.error, true);
+                    reactionBtn.classList.toggle('active'); // Revert on error
                     return;
                 }
                 
-                if (data.success) {
-                    countElement.textContent = data.count;
-                    showToast('<i class="fas fa-check-circle"></i> Your reaction has been recorded!');
-                }
+                reactionCount.textContent = data.count;
+                showToast('Your reaction has been recorded!');
             })
-            .catch(err => {
-                console.error(err);
-                showToast('<i class="fas fa-times-circle"></i> Error updating reaction', true);
-                // Revert UI on error
-                reactionBtn.classList.toggle('active');
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error updating reaction', true);
+                reactionBtn.classList.toggle('active'); // Revert on error
+            })
+            .finally(() => {
+                reactionBtn.disabled = false;
             });
         }
         
-        // Scroll to comments section
-        function scrollToComments() {
-            document.getElementById('comments').scrollIntoView({ 
-                behavior: 'smooth' 
-            });
-        }
-        
-        // Enhanced toast notification
+        // Show toast notification
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
-            toast.innerHTML = message;
+            toast.textContent = message;
             toast.className = isError ? 'toast error show' : 'toast show';
             
             setTimeout(() => {
                 toast.className = 'toast';
             }, 3000);
         }
-        
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Auto-scroll to comments if there's a success message
-            <?php if ($commentSuccess || $showSuccessMessage): ?>
-            scrollToComments();
-            <?php endif; ?>
-        });
     </script>
 </body>
 </html>
