@@ -1,0 +1,675 @@
+""  
+[08-May-2025 00:27:39 Europe/Berlin] PHP Warning:  require_once(../models/CommentModel.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\CommentC.php on line 3
+[08-May-2025 00:27:39 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../models/CommentModel.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\CommentC.php:3
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(4): require_once()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\config\config.php(62): require_once('C:\\xampp\\htdocs...')
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(6): {closure}('BlogController')
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\CommentC.php on line 3
+[08-May-2025 00:27:40 Europe/Berlin] PHP Warning:  require_once(../models/CommentModel.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\CommentC.php on line 3
+[08-May-2025 00:27:40 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../models/CommentModel.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\CommentC.php:3
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(4): require_once()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\config\config.php(62): require_once('C:\\xampp\\htdocs...')
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(6): {closure}('BlogController')
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\CommentC.php on line 3
+[08-May-2025 00:32:42 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:32:42 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:32:42 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:32:42 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:32:42 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:32:42 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:32:42 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:32:42 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:32:42 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:32:42 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:32:42 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:32:42 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:32:42 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:32:42 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:32:42 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:32:43 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:32:43 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:32:43 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:32:43 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:32:43 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:32:43 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:32:43 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:32:43 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:32:43 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:32:43 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:32:43 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:32:43 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:32:43 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:32:43 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:32:43 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:32:43 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function isVisitor() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php:844
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php on line 844
+[08-May-2025 00:39:12 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:39:12 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:39:12 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:39:12 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:39:12 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:39:12 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:39:12 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:39:12 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:39:12 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:39:12 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:39:12 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:39:12 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:39:12 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:39:12 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:39:12 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:39:14 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:39:14 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:39:14 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:39:14 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:39:14 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:39:14 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:39:14 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:39:14 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:39:14 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:39:14 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:39:14 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:39:14 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:39:14 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:39:14 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:39:14 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:45:43 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:45:43 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:45:43 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "photo_path" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 24
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "latitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 25
+[08-May-2025 00:45:44 Europe/Berlin] PHP Warning:  Undefined array key "longitude" in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 26
+[08-May-2025 00:50:02 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'photo_path' in 'field list' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:44
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(44): PDO->prepare('INSERT INTO pos...')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('sdv', 'svddddddddd', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 44
+[08-May-2025 00:50:03 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'photo_path' in 'field list' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:44
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(44): PDO->prepare('INSERT INTO pos...')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('sdv', 'svddddddddd', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 44
+[08-May-2025 00:50:04 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'photo_path' in 'field list' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:44
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(44): PDO->prepare('INSERT INTO pos...')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('sdv', 'svddddddddd', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 44
+[08-May-2025 00:50:04 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'photo_path' in 'field list' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:44
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(44): PDO->prepare('INSERT INTO pos...')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('sdv', 'svddddddddd', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 44
+[08-May-2025 00:50:04 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'photo_path' in 'field list' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:44
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(44): PDO->prepare('INSERT INTO pos...')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('sdv', 'svddddddddd', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 44
+[08-May-2025 00:50:33 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'photo_path' in 'field list' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:44
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(44): PDO->prepare('INSERT INTO pos...')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('TEST', 'vsddddddddddd', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 44
+[08-May-2025 00:50:34 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'photo_path' in 'field list' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:44
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(44): PDO->prepare('INSERT INTO pos...')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('TEST', 'vsddddddddddd', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 44
+[08-May-2025 01:03:29 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'photo_path' in 'field list' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:44
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(44): PDO->prepare('INSERT INTO pos...')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('dvsss', 'vdssssssssss', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 44
+[08-May-2025 01:03:35 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'photo_path' in 'field list' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:44
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(44): PDO->prepare('INSERT INTO pos...')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('dvsss', 'vdssssssssss', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 44
+[08-May-2025 01:03:36 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'photo_path' in 'field list' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:44
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(44): PDO->prepare('INSERT INTO pos...')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('dvsss', 'vdssssssssss', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 44
+[08-May-2025 01:08:48 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'photo_path' in 'field list' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:44
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(44): PDO->prepare('INSERT INTO pos...')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('TEST', 'svddddddddddd', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 44
+[08-May-2025 01:09:57 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'photo_path' in 'field list' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:44
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(44): PDO->prepare('INSERT INTO pos...')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('TEST', 'svddddddddddd', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 44
+[08-May-2025 01:12:32 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'photo_path' in 'field list' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:44
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(44): PDO->prepare('INSERT INTO pos...')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('vdvd', 'vdsssssssssssss...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 44
+[08-May-2025 01:13:57 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'photo_path' in 'field list' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:44
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(44): PDO->prepare('INSERT INTO pos...')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('vdss', 'svdddddddddd', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 44
+[08-May-2025 01:13:58 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'photo_path' in 'field list' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:44
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(44): PDO->prepare('INSERT INTO pos...')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('vdss', 'svdddddddddd', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 44
+[08-May-2025 01:23:05 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'slug' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:46
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PDOStatement->execute(Array)
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('vvvvvvvvv', 'svddddddddddd', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 46
+[08-May-2025 01:23:06 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'slug' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:46
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PDOStatement->execute(Array)
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('vvvvvvvvv', 'svddddddddddd', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 46
+[08-May-2025 01:23:06 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'slug' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:46
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PDOStatement->execute(Array)
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('vvvvvvvvv', 'svddddddddddd', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 46
+[08-May-2025 01:23:07 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'slug' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:46
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PDOStatement->execute(Array)
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('vvvvvvvvv', 'svddddddddddd', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 46
+[08-May-2025 01:23:28 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'slug' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:46
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PDOStatement->execute(Array)
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('TEST', 'vdvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 46
+[08-May-2025 01:23:28 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'slug' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:46
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PDOStatement->execute(Array)
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('TEST', 'vdvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 46
+[08-May-2025 01:23:41 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'slug' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:46
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PDOStatement->execute(Array)
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('TEST', 'vdvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 46
+[08-May-2025 01:23:49 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'slug' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:46
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PDOStatement->execute(Array)
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('TEST', 'vdvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 46
+[08-May-2025 01:24:02 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'slug' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:46
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PDOStatement->execute(Array)
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('vvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 46
+[08-May-2025 01:24:09 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'slug' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:46
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PDOStatement->execute(Array)
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('vvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 46
+[08-May-2025 01:24:09 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'slug' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:46
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PDOStatement->execute(Array)
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('vvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 46
+[08-May-2025 01:24:10 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'slug' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:46
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PDOStatement->execute(Array)
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('vvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 46
+[08-May-2025 01:24:10 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'slug' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:46
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PDOStatement->execute(Array)
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('vvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 46
+[08-May-2025 01:24:10 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'slug' in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:46
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PDOStatement->execute(Array)
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(205): PostC->ajouter('vvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 46
+[08-May-2025 01:37:14 Europe/Berlin] Error checking column existence: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+[08-May-2025 01:38:00 Europe/Berlin] Error checking column existence: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+[08-May-2025 01:40:52 Europe/Berlin] Generated SQL: INSERT INTO posts (title, content, author_id, slug, created_at) VALUES (:title, :content, :authorId, :slug, NOW())
+[08-May-2025 01:40:52 Europe/Berlin] Parameters: {"title":"vvvvvvvvvvvvvvv","content":"vvvvvvvvvvvvvvvvvvvv","authorId":1,"slug":"vvvvvvvvvvvvvvv"}
+[08-May-2025 01:47:05 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('sssssssssssssss')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('sssssssssssssss', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:47:15 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('sssssssssssssss')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('sssssssssssssss', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:47:16 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('sssssssssssssss')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('sssssssssssssss', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:47:16 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('sssssssssssssss')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('sssssssssssssss', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:47:31 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('ddd')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('ddd', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:47:34 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('ddd')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('ddd', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:47:36 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('ddd')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('ddd', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:47:37 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('ddd')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('ddd', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:47:37 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('ddd')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('ddd', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:47:37 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('ddd')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('ddd', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:47:38 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('ddd')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('ddd', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:47:38 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('ddd')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('ddd', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:47:38 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('ddd')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('ddd', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:47:38 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('ddd')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('ddd', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:47:38 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('ddd')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('ddd', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:48:14 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('vvvvvvvvvvvvv')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('vvvvvvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:48:14 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('vvvvvvvvvvvvv')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('vvvvvvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:48:16 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('vvvvvvvvvvvvv')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('vvvvvvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:48:49 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('vvvvvvvvvvvvv')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('vvvvvvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:48:50 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('vvvvvvvvvvvvv')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('vvvvvvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:48:50 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('vvvvvvvvvvvvv')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('vvvvvvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:48:50 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('vvvvvvvvvvvvv')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('vvvvvvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:48:51 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('vvvvvvvvvvvvv')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('vvvvvvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:49:12 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('vvvvvvvvvvvvv')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(345): PostC->ajouter('vvvvvvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:49:59 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('vvvvvvvvvvvv')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(346): PostC->ajouter('vvvvvvvvvvvv', 'vvvvvvvvvvvv', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:50:16 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('vvvvvvvvv')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(346): PostC->ajouter('vvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:50:18 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('vvvvvvvvv')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(346): PostC->ajouter('vvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:52:05 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('vvvvvvvvvvv')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(346): PostC->ajouter('vvvvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:52:07 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PostC::createSlug() in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:115
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php(46): PostC->createUniqueSlug('vvvvvvvvvvv')
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(346): PostC->ajouter('vvvvvvvvvvv', 'vvvvvvvvvvvvvvv...', 1, NULL, NULL, NULL)
+#2 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#3 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 115
+[08-May-2025 01:52:42 Europe/Berlin] Generated SQL: INSERT INTO posts (title, content, author_id, slug, created_at) VALUES (:title, :content, :authorId, :slug, NOW())
+[08-May-2025 01:52:42 Europe/Berlin] Parameters: {"title":"vvvvvvvv","content":"dddddddddddddddddddddddd","authorId":1,"slug":"vvvvvvvv"}
+[08-May-2025 01:57:38 Europe/Berlin] Generated SQL: INSERT INTO posts (title, content, author_id, slug, created_at) VALUES (:title, :content, :authorId, :slug, NOW())
+[08-May-2025 01:57:38 Europe/Berlin] Parameters: {"title":"dddddddd","content":"vvvvvvvvvvvvvvvvvvvvvvv","authorId":1,"slug":"dddddddd"}
+[08-May-2025 02:14:08 Europe/Berlin] Generated SQL: INSERT INTO posts (title, content, author_id, slug, created_at) VALUES (:title, :content, :authorId, :slug, NOW())
+[08-May-2025 02:14:08 Europe/Berlin] Parameters: {"title":"ddddddddddd","content":"vvvvvvvvvvvvvvvvv","authorId":1,"slug":"ddddddddddd"}
+[08-May-2025 02:15:32 Europe/Berlin] Generated SQL: INSERT INTO posts (title, content, author_id, slug, created_at) VALUES (:title, :content, :authorId, :slug, NOW())
+[08-May-2025 02:15:32 Europe/Berlin] Parameters: {"title":"dvvvvvs","content":"dsssssssssssssssssss","authorId":1,"slug":"dvvvvvs"}
+[08-May-2025 02:35:08 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:35:10 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:35:55 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:35:56 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:35:57 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:35:57 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:35:58 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:36:00 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:36:02 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:36:32 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:36:45 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_backend.php(8): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:36:57 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:37:23 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:37:30 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:37:30 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:37:31 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:37:31 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:37:32 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:37:35 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:37:36 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:37:36 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:37:36 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:37:39 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:37:57 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "config" not found in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php:137
+Stack trace:
+#0 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\controller.php(356): PostC->afficherPosts()
+#1 C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\views\blog_frontend.php(23): BlogController->handleRequest()
+#2 {main}
+  thrown in C:\xampp\htdocs\web.pro\inst\pro\pro\blog part\controllers\PostC.php on line 137
+[08-May-2025 02:39:26 Europe/Berlin] Generated SQL: INSERT INTO posts (title, content, author_id, slug, created_at) VALUES (:title, :content, :authorId, :slug, NOW())
+[08-May-2025 02:39:26 Europe/Berlin] Parameters: {"title":"vvvvvvvvvvv","content":"vvvvvvvvvvvvvvvvv","authorId":1,"slug":"vvvvvvvvvvv-1"}
