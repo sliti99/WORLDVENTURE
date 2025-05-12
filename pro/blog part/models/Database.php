@@ -1,16 +1,12 @@
 <?php
+require_once __DIR__ . '/../config/config.php';
+
 class Database {
     private static $instance = null;
     private $pdo;
 
     private function __construct() {
         try {
-            // Use constants directly without requiring config first
-            $dbHost = defined('DB_HOST') ? DB_HOST : 'localhost';
-            $dbName = defined('DB_NAME') ? DB_NAME : 'worldventure';
-            $dbUser = defined('DB_USER') ? DB_USER : 'root';
-            $dbPass = defined('DB_PASS') ? DB_PASS : '';
-            
             $options = [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -19,9 +15,9 @@ class Database {
             ];
             
             $this->pdo = new PDO(
-                "mysql:host={$dbHost};dbname={$dbName};charset=utf8mb4",
-                $dbUser,
-                $dbPass,
+                "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+                DB_USER,
+                DB_PASS,
                 $options
             );
         } catch (PDOException $e) {

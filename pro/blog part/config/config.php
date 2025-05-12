@@ -28,48 +28,18 @@ if (!isset($_SESSION['role']) && (empty($_SESSION['logged_in']) || $_SESSION['lo
     $_SESSION['user_id'] = 0; // Default visitor ID
 }
 
-// Base URL - updated to handle spaces in folder names
+// Base URL
 define('BASE_URL', '/web.pro/inst/pro/pro/');
 
-// Path constants - fix path handling for spaces in folder names
-define('ROOT_PATH', str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT'] . BASE_URL));
+// Path constants
+define('ROOT_PATH', $_SERVER['DOCUMENT_ROOT'] . BASE_URL);
 define('BLOG_PATH', ROOT_PATH . 'blog part/');
+#define('VIEWS_PATH', BLOG_PATH . 'views/');
+#define('MODEL_PATH', BLOG_PATH . 'models/');
+#define('CONTROLLER_PATH', BLOG_PATH . 'controllers/');
 
 // Upload settings
 if (!defined('UPLOAD_DIR')) {
     define('UPLOAD_DIR', ROOT_PATH . 'uploads/photos/'); // Server directory for uploads
     define('UPLOAD_URL', BASE_URL . 'uploads/photos/'); // URL path for uploaded images
 }
-
-// First require Database.php directly - it has no dependencies and others depend on it
-require_once __DIR__ . '/../models/Database.php';
-
-// Now load authentication functions - they depend on Database
-require_once __DIR__ . '/auth.php';
-
-// Define controlled autoloader for models and controllers
-spl_autoload_register(function($class) {
-    // Define class/file mapping for special cases
-    $classMap = [
-        'Post' => __DIR__ . '/../models/PostModel.php',
-        'Comment' => __DIR__ . '/../models/CommentModel.php',
-        'BlogModel' => __DIR__ . '/../models/model.php',
-        'BlogController' => __DIR__ . '/../controllers/controller.php'
-    ];
-    
-    // If the class is in our mapping, load it directly
-    if (isset($classMap[$class])) {
-        require_once $classMap[$class];
-        return;
-    }
-    
-    // Standard path-based lookup
-    $paths = [__DIR__ . '/../models/', __DIR__ . '/../controllers/'];
-    foreach ($paths as $path) {
-        $file = $path . $class . '.php';
-        if (file_exists($file)) {
-            require_once $file;
-            return;
-        }
-    }
-});

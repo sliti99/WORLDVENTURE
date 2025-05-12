@@ -39,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Login - WorldVenture</title>
     <link rel="stylesheet" href="../../main_front/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="js/validation.js"></script>
     <style>
         .login-container {
             max-width: 450px;
@@ -91,28 +90,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: block;
             margin-bottom: 0.5rem;
             color: #334155;
+            font-weight: 500;
         }
         
         .form-group input {
             width: 100%;
-            padding: 0.75rem;
-            padding-left: 2.5rem;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
             border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            transition: all 0.3s;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
         
         .form-group input:focus {
             border-color: #3e92cc;
-            box-shadow: 0 0 0 2px rgba(62, 146, 204, 0.2);
+            box-shadow: 0 0 0 3px rgba(62, 146, 204, 0.15);
             outline: none;
         }
         
         .form-group i {
             position: absolute;
-            left: 0.75rem;
-            top: 2.3rem;
+            left: 1rem;
+            top: 2.4rem;
             color: #64748b;
         }
         
@@ -121,33 +120,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: white;
             border: none;
             padding: 0.8rem;
-            border-radius: 10px;
+            border-radius: 8px;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 0.5rem;
         }
         
         .login-btn:hover {
-            background: linear-gradient(135deg, #0073e6, #0088b3);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(62, 146, 204, 0.4);
+            box-shadow: 0 4px 12px rgba(10, 76, 140, 0.3);
         }
         
         .login-footer {
             margin-top: 1.5rem;
             text-align: center;
-            font-size: 0.9rem;
             color: #64748b;
+            font-size: 0.9rem;
         }
         
         .login-footer a {
             color: #3e92cc;
-            font-weight: 500;
             text-decoration: none;
+            font-weight: 500;
             transition: color 0.2s;
         }
         
@@ -159,14 +155,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .error-message {
             background: #fee2e2;
             color: #ef4444;
-            padding: 0.75rem;
-            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
             margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.9rem;
-            animation: shake 0.5s;
+            animation: shake 0.5s ease-in-out;
         }
         
         @keyframes shake {
@@ -177,54 +173,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         .guest-login {
             display: block;
-            margin-top: 1.5rem;
-            background: #f1f5f9;
-            color: #64748b;
             text-align: center;
-            padding: 0.75rem;
-            border-radius: 10px;
+            margin-top: 1rem;
+            color: #64748b;
             text-decoration: none;
-            transition: all 0.3s;
             font-size: 0.9rem;
         }
         
         .guest-login:hover {
-            background: #e2e8f0;
-            color: #0f172a;
+            color: #334155;
+            text-decoration: underline;
         }
         
         .validation-error {
             color: #ef4444;
             font-size: 0.85rem;
-            margin-top: 0.5rem;
+            margin-top: 0.3rem;
             display: none;
-        }
-        
-        body {
-            background: url('../../main_front/background.jpg') no-repeat center center fixed;
-            background-size: cover;
-            color: #333;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .background-image {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: rgba(255, 255, 255, 0.5);  /* Semi-transparent white overlay */
-        }
-        
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background-color: rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
@@ -235,42 +200,86 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="login-container">
         <div class="login-header">
             <img src="../../main_front/logo.png" alt="WorldVenture Logo">
-            <h1>Welcome Back</h1>
-            <p>Sign in to continue your adventure</p>
+            <h1>Welcome Back!</h1>
+            <p>Login to access your WorldVenture account</p>
         </div>
         
         <?php if ($error): ?>
         <div class="error-message">
-            <i class="fas fa-exclamation-circle"></i>
-            <?= htmlspecialchars($error) ?>
+            <i class="fas fa-exclamation-circle"></i> <?= $error ?>
         </div>
         <?php endif; ?>
         
-        <form class="login-form" id="loginForm" method="POST" action="">
+        <form class="login-form" method="POST" action="" onsubmit="return validateForm()">
             <div class="form-group">
                 <label for="email">Email Address</label>
-                <i class="fas fa-envelope"></i>
-                <input type="email" id="email" name="email" placeholder="Your email address" required>
+                <i class="fas fa-envelope" style="top: 39px; left: 15px; color: #64748b;"></i>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
                 <div id="emailError" class="validation-error"></div>
             </div>
+            
             <div class="form-group">
                 <label for="password">Password</label>
-                <i class="fas fa-lock"></i>
-                <input type="password" id="password" name="password" placeholder="Your password" required>
+                <i class="fas fa-lock" style="top: 39px; left: 15px; color: #64748b;"></i>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
                 <div id="passwordError" class="validation-error"></div>
             </div>
-            <button type="submit" id="loginButton" class="login-btn">
-                <i class="fas fa-sign-in-alt"></i> Log In
+            
+            <button type="submit" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i> Login
             </button>
         </form>
         
         <div class="login-footer">
-            <p>Don't have an account? <a href="#">Sign up</a></p>
+            <p>Don't have an account? <a href="blog_frontend.php?guest=true">Continue as a guest</a></p>
         </div>
         
         <a href="blog_frontend.php?guest=true" class="guest-login">
-            <i class="fas fa-user-secret"></i> Continue as Guest
+            <i class="fas fa-user-secret"></i> Browse as Guest
         </a>
     </div>
+    
+    <script>
+        function validateForm() {
+            let isValid = true;
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const emailError = document.getElementById('emailError');
+            const passwordError = document.getElementById('passwordError');
+            
+            // Reset error messages
+            emailError.style.display = 'none';
+            passwordError.style.display = 'none';
+            
+            // Validate email
+            if (email === '') {
+                emailError.textContent = 'Email address is required';
+                emailError.style.display = 'block';
+                isValid = false;
+            } else if (!isValidEmail(email)) {
+                emailError.textContent = 'Please enter a valid email address';
+                emailError.style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate password
+            if (password === '') {
+                passwordError.textContent = 'Password is required';
+                passwordError.style.display = 'block';
+                isValid = false;
+            } else if (password.length < 4) {
+                passwordError.textContent = 'Password must be at least 4 characters';
+                passwordError.style.display = 'block';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        function isValidEmail(email) {
+            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email.toLowerCase());
+        }
+    </script>
 </body>
 </html>

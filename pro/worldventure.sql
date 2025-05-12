@@ -1,520 +1,167 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: May 07, 2025 at 04:15 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `worldventure`
---
-CREATE DATABASE IF NOT EXISTS `worldventure` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `worldventure`;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `admins`
---
-
-CREATE TABLE `admins` (
-  `id` int(11) NOT NULL,
-  `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `role` varchar(50) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `admins`
---
-
-INSERT INTO `admins` (`id`, `username`, `password`, `name`, `email`, `role`, `created_at`, `updated_at`) VALUES
-(1, 'admin', '$2y$10$exDW.0o9RHJQKyXHr5pDPuHsQzOC3FD8uV6Qg80IBhtPyOsP.9YFu', 'Administrateur', 'admin@worldventure.com', 'admin', '2025-03-09 23:16:47', '2025-03-09 23:16:47'),
-(2, 'admin2', 'admin2', 'adminis', 'adminis@esp.t', 'support', '2025-03-09 23:42:27', '2025-03-09 23:42:27');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `categories`
---
-
-CREATE TABLE `categories` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `slug` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `categories`
---
-
-INSERT INTO `categories` (`id`, `name`, `slug`, `created_at`) VALUES
-(1, 'Travel Tips', 'travel-tips', '2025-04-03 23:36:08'),
-(2, 'Destinations', 'destinations', '2025-04-03 23:36:08'),
-(3, 'Adventure', 'adventure', '2025-04-03 23:36:08'),
-(4, 'Budget Travel', 'budget-travel', '2025-04-03 23:36:08');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` enum('visitor','user','admin','support') NOT NULL DEFAULT 'user',
-  `profile_image` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `profile_image`, `created_at`, `updated_at`) VALUES
-(1, 'Admin User', 'admin@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', NULL, '2025-04-03 23:36:08', '2025-04-03 23:36:08'),
-(2, 'Regular User', 'user@example.com', '$2y$10$examplePasswordHashUser', 'user', NULL, '2025-04-16 08:00:00', '2025-04-16 08:00:00');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `chat_messages`
---
-
-CREATE TABLE `chat_messages` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `content` text NOT NULL,
-  `user_name` varchar(100) NOT NULL,
-  `user_role` varchar(50) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `chat_messages`
---
-
-INSERT INTO `chat_messages` (`id`, `user_id`, `content`, `user_name`, `user_role`, `created_at`) VALUES
-(1, 1, 'Welcome to the WorldVenture community chat!', 'Admin User', 'admin', '2025-05-07 10:00:00'),
-(2, 2, 'Hello everyone! Excited to be part of this community.', 'Regular User', 'user', '2025-05-07 10:05:00');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `comments`
---
-
-CREATE TABLE `comments` (
-  `id` int(11) NOT NULL,
-  `post_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `content` text NOT NULL,
-  `reactions` int(11) NOT NULL DEFAULT 0,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `comments`
---
-
-INSERT INTO `comments` (`id`, `post_id`, `user_id`, `content`, `reactions`, `created_at`) VALUES
-(1, 1, 1, 'This is a great first post! Looking forward to more content.', 3, '2025-04-03 23:36:08'),
-(2, 2, 2, 'I love these destination suggestions! I would also add Paris to the list.', 9, '2025-04-03 23:36:08'),
-(3, 2, 1, 'vdvd', 2, '2025-04-16 22:42:26'),
-(5, 1, 1, 'test', 1, '2025-04-17 10:57:26'),
-(6, 2, 2, 'vdsv', 1, '2025-04-19 16:07:16'),
-(7, 6, 1, 'vds', 0, '2025-04-24 08:36:52');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `destinations`
---
-
-CREATE TABLE `destinations` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
-  `country` varchar(100) DEFAULT NULL,
-  `image_url` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `offers`
---
-
-CREATE TABLE `offers` (
-  `id` int(11) NOT NULL,
-  `destination_id` int(11) DEFAULT NULL,
-  `title` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
-  `price` decimal(10,2) DEFAULT NULL,
-  `start_date` date DEFAULT NULL,
-  `end_date` date DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `posts`
---
-
-CREATE TABLE `posts` (
-  `id` int(11) NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `slug` varchar(255) NOT NULL,
-  `content` text NOT NULL,
-  `excerpt` text DEFAULT NULL,
-  `image` varchar(255) DEFAULT NULL,
-  `author_id` int(11) NOT NULL,
-  `status` enum('published','draft','pending') NOT NULL DEFAULT 'draft',
-  `reactions` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT json_object('like',0,'love',0,'wow',0) CHECK (json_valid(`reactions`)),
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `posts`
---
-
-INSERT INTO `posts` (`id`, `title`, `slug`, `content`, `excerpt`, `image`, `author_id`, `status`, `reactions`, `created_at`, `updated_at`) VALUES
-(1, 'Welcome to WorldVenture', 'welcome-to-worldventure', 'This is your first blog post on WorldVenture. Edit or delete it, then start writing!', 'This is your first blog post on WorldVenture.', NULL, 1, 'published', NULL, '2025-04-03 23:36:08', '2025-04-23 20:50:12'),
-(2, 'Top 10 Travel Destinations in 2025', 'top-10-travel-destinations-2025', '<p>Explore the most amazing destinations of 2025!</p><p>From beaches to mountains, we have covered everything in this comprehensive guide.</p>', 'Discover the most popular travel spots for your next adventure.', NULL, 1, 'published', NULL, '2025-04-03 23:36:08', '2025-04-23 20:50:12'),
-(4, 'vdsvdsv', 'vdsvdsv', 'vdssdvvvdvddvsvd', NULL, NULL, 1, 'published', NULL, '2025-04-19 16:34:57', '2025-04-23 20:50:12'),
-(6, 'dvvd', 'dvvd', 'vdvdvdsdvsvd', NULL, NULL, 1, 'published', '0', '2025-04-24 07:46:09', '2025-04-24 08:50:37'),
-(8, 'vdf', 'vdf', 'vddvdvdvdvdvvvvvvvvvvvvvvvvvv', NULL, NULL, 1, 'published', '{\"like\": 0, \"love\": 0, \"wow\": 0}', '2025-04-24 08:52:08', '2025-04-24 08:52:08');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `reactions_log`
---
-
-CREATE TABLE `reactions_log` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `type` varchar(20) NOT NULL,
-  `item_id` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `reactions_log`
---
-
-INSERT INTO `reactions_log` (`id`, `user_id`, `type`, `item_id`, `created_at`) VALUES
-(1, 1, 'comment', 2, '2025-04-16 22:42:13'),
-(2, 1, 'comment', 3, '2025-04-16 22:42:28'),
-(3, 1, 'post', 2, '2025-04-16 22:42:32'),
-(4, 2, 'post', 1, '2025-04-17 08:44:30'),
-(5, 2, 'post', 2, '2025-04-17 08:44:33'),
-(6, 2, 'comment', 2, '2025-04-17 08:54:42'),
-(7, 2, 'comment', 3, '2025-04-17 08:54:45'),
-(9, 1, 'comment', 4, '2025-04-17 08:58:35'),
-(10, 1, 'comment', 5, '2025-04-17 10:57:37'),
-(11, 1, 'post', 3, '2025-04-17 10:59:37'),
-(12, 2, 'comment', 6, '2025-04-19 16:07:22'),
-(14, 2, 'post', 4, '2025-04-19 16:35:48'),
-(17, 1, 'post', 1, '2025-04-24 08:37:41');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `reclamations`
---
-
-CREATE TABLE `reclamations` (
-  `id_reclamation` int(11) NOT NULL,
-  `id_user_reclamation` int(11) NOT NULL,
-  `subject` varchar(255) NOT NULL,
-  `message` text NOT NULL,
-  `etat_reclamation` varchar(500) NOT NULL DEFAULT 'Pending',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `responses`
---
-
-CREATE TABLE `responses` (
-  `id_reponse` int(11) NOT NULL,
-  `id_reclamation` int(11) NOT NULL,
-  `id_user_reponse` int(11) NOT NULL,
-  `response_message` text NOT NULL,
-  `date_reponse` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `settings`
---
-
-CREATE TABLE `settings` (
-  `id` int(11) NOT NULL,
-  `setting_key` varchar(255) NOT NULL,
-  `setting_value` text DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `settings`
---
-
-INSERT INTO `settings` (`id`, `setting_key`, `setting_value`, `created_at`, `updated_at`) VALUES
-(1, 'site_title', 'WorldVenture - Travel Blog', '2025-04-03 23:36:08', '2025-04-03 23:36:08'),
-(2, 'site_description', 'Explore the world with WorldVenture - Your ultimate travel companion', '2025-04-03 23:36:08', '2025-04-03 23:36:08'),
-(3, 'blog_posts_per_page', '10', '2025-04-03 23:36:08', '2025-04-03 23:36:08'),
-(4, 'enable_comments', 'true', '2025-04-03 23:36:08', '2025-04-03 23:36:08');
-
--- --------------------------------------------------------
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `admins`
---
-ALTER TABLE `admins`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`);
-
---
--- Indexes for table `categories`
---
-ALTER TABLE `categories`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `slug` (`slug`);
-
---
--- Indexes for table `chat_messages`
---
-ALTER TABLE `chat_messages`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table `comments`
---
-ALTER TABLE `comments`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `post_id` (`post_id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table `destinations`
---
-ALTER TABLE `destinations`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `offers`
---
-ALTER TABLE `offers`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `destination_id` (`destination_id`);
-
---
--- Indexes for table `posts`
---
-ALTER TABLE `posts`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `slug` (`slug`),
-  ADD KEY `author_id` (`author_id`);
-
---
--- Indexes for table `reactions_log`
---
-ALTER TABLE `reactions_log`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_reaction` (`user_id`,`type`,`item_id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table `reclamations`
---
-ALTER TABLE `reclamations`
-  ADD PRIMARY KEY (`id_reclamation`),
-  ADD KEY `id_user_reclamation` (`id_user_reclamation`);
-
---
--- Indexes for table `responses`
---
-ALTER TABLE `responses`
-  ADD PRIMARY KEY (`id_reponse`),
-  ADD KEY `id_reclamation` (`id_reclamation`),
-  ADD KEY `id_user_reponse` (`id_user_reponse`);
-
---
--- Indexes for table `settings`
---
-ALTER TABLE `settings`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `setting_key` (`setting_key`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `admins`
---
-ALTER TABLE `admins`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `categories`
---
-ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT for table `chat_messages`
---
-ALTER TABLE `chat_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `comments`
---
-ALTER TABLE `comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT for table `destinations`
---
-ALTER TABLE `destinations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `offers`
---
-ALTER TABLE `offers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `posts`
---
-ALTER TABLE `posts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
---
--- AUTO_INCREMENT for table `reactions_log`
---
-ALTER TABLE `reactions_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
-
---
--- AUTO_INCREMENT for table `reclamations`
---
-ALTER TABLE `reclamations`
-  MODIFY `id_reclamation` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `responses`
---
-ALTER TABLE `responses`
-  MODIFY `id_reponse` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `settings`
---
-ALTER TABLE `settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `comments`
---
-ALTER TABLE `comments`
-  ADD CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `offers`
---
-ALTER TABLE `offers`
-  ADD CONSTRAINT `offers_ibfk_1` FOREIGN KEY (`destination_id`) REFERENCES `destinations` (`id`) ON DELETE SET NULL;
-
---
--- Constraints for table `posts`
---
-ALTER TABLE `posts`
-  ADD CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `reactions_log`
---
-ALTER TABLE `reactions_log`
-  ADD CONSTRAINT `reactions_log_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `reclamations`
---
-ALTER TABLE `reclamations`
-  ADD CONSTRAINT `reclamations_ibfk_1` FOREIGN KEY (`id_user_reclamation`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `responses`
---
-ALTER TABLE `responses`
-  ADD CONSTRAINT `responses_ibfk_1` FOREIGN KEY (`id_reclamation`) REFERENCES `reclamations` (`id_reclamation`) ON DELETE CASCADE,
-  ADD CONSTRAINT `responses_ibfk_2` FOREIGN KEY (`id_user_reponse`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `chat_messages`
---
-ALTER TABLE `chat_messages`
-  ADD CONSTRAINT `chat_messages_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- WorldVenture Travel Blog Platform Database Schema
+
+-- Drop database if exists for clean install
+DROP DATABASE IF EXISTS worldventure;
+CREATE DATABASE worldventure CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE worldventure;
+
+-- Create users table
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  role ENUM('user', 'admin') DEFAULT 'user',
+  avatar VARCHAR(255),
+  bio TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- Create admins table (legacy support)
+CREATE TABLE admins (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- Create posts table
+CREATE TABLE posts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+  slug VARCHAR(255) NOT NULL,
+  author_id INT NOT NULL,
+  status ENUM('draft', 'published', 'archived') DEFAULT 'published',
+  reactions INT DEFAULT 0,
+  photo_path VARCHAR(255),
+  location_lat DECIMAL(10, 8),
+  location_lng DECIMAL(11, 8),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Create comments table
+CREATE TABLE comments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  post_id INT NOT NULL,
+  user_id INT NOT NULL,
+  content TEXT NOT NULL,
+  reactions INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Create reactions_log table to track user reactions
+CREATE TABLE reactions_log (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  type ENUM('post', 'comment') NOT NULL,
+  item_id INT NOT NULL, -- post_id or comment_id
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE KEY unique_reaction (user_id, type, item_id)
+) ENGINE=InnoDB;
+
+-- Insert admin user
+INSERT INTO users (name, email, password, role) VALUES 
+('Admin', 'admin@worldventure.com', 'admin123', 'admin'),
+('John Doe', 'john@example.com', 'password123', 'user'),
+('Jane Smith', 'jane@example.com', 'password123', 'user'),
+('Travel Guy', 'travel@example.com', 'password123', 'user');
+
+-- Insert legacy admin
+INSERT INTO admins (name, email, password) VALUES 
+('Admin', 'admin@worldventure.com', 'admin123');
+
+-- Insert sample posts
+INSERT INTO posts (title, content, slug, author_id, status, reactions, photo_path) VALUES 
+('Exploring the Hidden Beaches of Thailand', 
+'Thailand is known for its beautiful beaches, but there are many hidden gems that most tourists never discover. Last month, I had the opportunity to explore some of these secluded spots. The crystal-clear waters and pristine white sands were absolutely breathtaking. The local food vendors offered some of the best seafood I\'ve ever tasted, grilled right on the beach. If you\'re planning a trip to Thailand, make sure to venture beyond the popular destinations like Phuket and Koh Samui. The smaller, less-known islands offer a more authentic experience without the crowds. My personal favorite was a small beach near Koh Lanta that required a short hike through a jungle path to reach. The effort was completely worth it!',
+'exploring-hidden-beaches-thailand', 1, 'published', 5, 'uploads/photos/thailand-beach.jpg'),
+
+('Ultimate Guide to Backpacking in Europe', 
+'Backpacking through Europe was one of the most rewarding experiences of my life. Over the course of two months, I visited 12 countries and countless cities. The key to a successful trip is to pack light but smart. I managed to fit everything into a 40L backpack, including clothes for different weather conditions. Transportation in Europe is incredibly efficient. I primarily used trains with a Eurail pass, which proved to be cost-effective for the distance covered. Hostels were my main accommodation choice, not just for budget reasons but also for the social aspect. I met so many incredible people who became travel companions for portions of my journey. Food can be expensive in certain countries, so I often shopped at local markets and prepared simple meals in hostel kitchens. This not only saved money but also gave me a glimpse into local food culture.',
+'ultimate-guide-backpacking-europe', 2, 'published', 8, 'uploads/photos/europe-backpacking.jpg'),
+
+('Mountain Trekking in Nepal: A Life-Changing Adventure', 
+'The Himalayas have always been on my bucket list, and last year I finally made the journey to Nepal. The trek to Everest Base Camp was physically challenging but spiritually rewarding. The majestic mountain views, combined with the warm hospitality of the Sherpa people, created an unforgettable experience. Preparation is crucial for this type of adventure. I trained for months, focusing on cardio and strength exercises to build endurance. Altitude sickness is a real concern, so taking time to acclimatize properly is essential. I spent a few days in Kathmandu and Lukla before gradually making my way up. The tea houses along the route provide basic but comfortable accommodation, and the dal bhat (lentil soup with rice) offered much-needed energy for the daily treks. The sense of achievement upon reaching Base Camp was indescribable. Standing in the shadow of the world\'s highest peak gave me a new perspective on life and my place in the world.',
+'mountain-trekking-nepal-adventure', 3, 'published', 12, 'uploads/photos/nepal-mountains.jpg'),
+
+('Safari Adventures in Tanzania', 
+'Witnessing the great migration in the Serengeti was a dream come true. Thousands of wildebeests and zebras crossing the plains, with predators lurking in the shadows, showcased nature in its rawest form. Our guide, a local Maasai with years of experience, knew exactly where to position our vehicle for the best wildlife viewing opportunities. We stayed in a mix of lodges and tented camps, each offering a unique experience. The tented camps, while more basic, provided an immersive experience with nature sounds surrounding us throughout the night. Beyond the Serengeti, we also visited Ngorongoro Crater, which hosts an incredible concentration of wildlife within its natural enclosure. Conservation efforts in Tanzania are commendable, with strict regulations to protect the fragile ecosystem. If you\'re planning a safari, I highly recommend visiting during the migration season, though be prepared for higher prices and more tourists.',
+'safari-adventures-tanzania', 4, 'published', 7, 'uploads/photos/tanzania-safari.jpg'),
+
+('Cultural Immersion in Japan', 
+'Japan offers a fascinating blend of ancient traditions and cutting-edge technology. My two-week journey took me from the bustling streets of Tokyo to the serene temples of Kyoto. The efficiency of the Japanese transportation system is remarkable, with the Shinkansen (bullet train) connecting major cities with punctual precision. In Tokyo, I explored diverse neighborhoods, each with its own character: Shibuya\'s youthful energy, Shinjuku\'s nightlife, and Asakusa\'s historical charm. A day trip to Mount Fuji provided a peaceful contrast to the urban experience. Kyoto, with its numerous temples and shrines, offered a glimpse into Japan\'s spiritual heritage. I participated in a traditional tea ceremony and stayed one night in a ryokan (traditional inn) with tatami floors and futon bedding. The Japanese cuisine was a highlight of the trip, from high-end sushi restaurants to humble street food stalls. Language can be a barrier, but most Japanese people are incredibly helpful despite communication challenges.',
+'cultural-immersion-japan', 1, 'published', 6, 'uploads/photos/japan-temple.jpg');
+
+-- Insert sample comments
+INSERT INTO comments (post_id, user_id, content, reactions) VALUES 
+(1, 2, 'This is amazing! I\'ve been planning a trip to Thailand. Could you recommend some specific beaches to visit?', 2),
+(1, 3, 'Beautiful photos! Did you have any issues finding accommodations near these hidden beaches?', 1),
+(2, 4, 'Great guide! How much would you budget per day for a mid-range backpacking experience?', 0),
+(3, 2, 'I\'ve always wanted to trek in Nepal. Was it difficult to get permits for the Everest region?', 3),
+(3, 3, 'The views look breathtaking! What camera equipment did you use to capture these shots?', 1),
+(4, 1, 'Tanzania has been on my bucket list for years. Which season did you visit in?', 0),
+(5, 4, 'I love Japanese culture! Did you get to visit any less touristy areas?', 2),
+(5, 2, 'The mix of traditional and modern in Japan is fascinating. How did you handle the language barrier?', 1);
+
+-- Insert reaction logs
+INSERT INTO reactions_log (user_id, type, item_id) VALUES
+(2, 'post', 1),
+(3, 'post', 1),
+(4, 'post', 1),
+(1, 'post', 1),
+(2, 'post', 1),
+(1, 'post', 2),
+(2, 'post', 2),
+(3, 'post', 2),
+(4, 'post', 2),
+(1, 'post', 3),
+(2, 'post', 3),
+(3, 'post', 3),
+(1, 'post', 3),
+(2, 'post', 3),
+(3, 'post', 3),
+(4, 'post', 3),
+(1, 'post', 4),
+(2, 'post', 4),
+(3, 'post', 4),
+(4, 'post', 4),
+(1, 'post', 5),
+(2, 'post', 5),
+(3, 'post', 5),
+(4, 'post', 5),
+(1, 'comment', 1),
+(3, 'comment', 1),
+(2, 'comment', 4),
+(3, 'comment', 4),
+(4, 'comment', 4),
+(2, 'comment', 7),
+(3, 'comment', 7);
+
+-- Create indexes for better performance
+CREATE INDEX idx_posts_author ON posts(author_id);
+CREATE INDEX idx_comments_post ON comments(post_id);
+CREATE INDEX idx_comments_user ON comments(user_id);
+CREATE INDEX idx_reactions_user ON reactions_log(user_id);
+CREATE INDEX idx_reactions_item ON reactions_log(type, item_id);
+
+-- Set correct counts for reactions (to ensure consistency)
+UPDATE posts p
+SET p.reactions = (
+    SELECT COUNT(*) FROM reactions_log 
+    WHERE type = 'post' AND item_id = p.id
+);
+
+UPDATE comments c
+SET c.reactions = (
+    SELECT COUNT(*) FROM reactions_log 
+    WHERE type = 'comment' AND item_id = c.id
+);
